@@ -2177,6 +2177,53 @@ button:disabled {
   50%       { box-shadow: inset 0 -2px 0 rgba(160,90,80,0.18), 0 6px 18px rgba(180,110,100,0.35); }
 }
 
+/* ── Inline feedback strip (too-short / error) ── */
+.input-feedback {
+  flex-shrink: 0;
+  padding: 7px 20px;
+  font-family: var(--font-ui);
+  font-size: var(--text-note);
+  line-height: var(--leading-body);
+  text-align: center;
+  animation: feedback-in 0.20s ease;
+}
+
+@keyframes feedback-in {
+  from { opacity: 0; transform: translateY(3px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.input-feedback--warn {
+  color: var(--rose-dark);
+  /* leave room for the mic FAB (44px wide, 20px from right) */
+  padding-right: 72px;
+}
+
+.input-feedback--error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--ink-muted);
+  text-align: left;
+  /* leave room for the mic FAB */
+  padding-right: 72px;
+}
+
+.input-feedback__retry {
+  flex-shrink: 0;
+  border: 0;
+  background: none;
+  padding: 2px 0;
+  font-family: var(--font-ui);
+  font-size: var(--text-note);
+  font-weight: var(--weight-semibold);
+  color: var(--rose-dark);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 /* ── Floating mic FAB ── */
 .input-mic-fab {
   position: absolute;

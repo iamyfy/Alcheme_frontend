@@ -29,19 +29,37 @@ function getDateLabel(timeZone?: string) {
   return `${get("month")}月${get("day")}日 ${get("weekday")}`;
 }
 
+// Minimum character count before submission is allowed.
+// Roughly 5 Chinese characters — "at least one real sentence".
+const MIN_CHARS = 10;
+
+type InputStatus = "idle" | "too-short" | "submitting" | "error";
+
 export function InputScreen({ onBack, onSubmit }: InputScreenProps) {
   const [content, setContent] = useState("");
   const [energy, setEnergy] = useState<string>();
   const [time] = useState(getNow);
   const [date] = useState(getDateLabel);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [status, setStatus] = useState<InputStatus>("idle");
 
+  const trimmed = content.trim();
   const charCount = content.length;
-  const canSubmit = content.trim().length > 0 && !isSubmitting;
+  // Button is only hard-disabled when empty or mid-submit.
+  const btnDisabled = trimmed.length === 0 || status === "submitting";
 
   const handleSubmit = () => {
-    if (!canSubmit) return;
-    setIsSubmitting(true);
+    if (btnDisabled) return;
+    if (trimmed.length < MIN_CHARS) {
+      setStatus("too-short");
+      return;
+    }
+    setStatus("submitting");
+    // TODO (phase 2): call distillNote(); set "error" on failure.
+    setTimeout(onSubmit, 520);
+  };
+
+  const handleRetry = () => {
+    setStatus("submitting");
     setTimeout(onSubmit, 520);
   };
 
@@ -94,23 +112,41 @@ export function InputScreen({ onBack, onSubmit }: InputScreenProps) {
           id="journal-content"
           className="input-paper__textarea"
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e) => {
+            setContent(e.target.value);
+            if (status === "too-short" || status === "error") setStatus("idle");
+          }}
           placeholder="今天发生了什么，哪怕只有一句话。"
           autoFocus
         />
       </div>
+
+      {/* ── Inline feedback (too-short / error) ── */}
+      {status === "too-short" && (
+        <p className="input-feedback input-feedback--warn" role="alert">
+          再多给我一点线索，好让我更认真地看见你。
+        </p>
+      )}
+      {status === "error" && (
+        <div className="input-feedback input-feedback--error" role="alert">
+          <span>提炼这一页时出了点意外，内容都还在。</span>
+          <button className="input-feedback__retry" type="button" onClick={handleRetry}>
+            重试
+          </button>
+        </div>
+      )}
 
       {/* ── Bottom toolbar ── */}
       <div className="input-bottombar">
         <span className="input-wordcount">{charCount} 字</span>
         <div className="input-bottombar__tools">
           <button
-            className={`input-alchemy-btn${isSubmitting ? " input-alchemy-btn--submitting" : ""}`}
+            className={`input-alchemy-btn${status === "submitting" ? " input-alchemy-btn--submitting" : ""}`}
             type="button"
-            disabled={!canSubmit}
+            disabled={btnDisabled}
             onClick={handleSubmit}
           >
-            {isSubmitting ? "照亮中 ✦" : "开始提炼 ✦"}
+            {status === "submitting" ? "照亮中 ✦" : "开始提炼 ✦"}
           </button>
         </div>
       </div>
