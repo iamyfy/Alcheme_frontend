@@ -1,9 +1,12 @@
+import { useState, useEffect } from "react";
 import { PrimaryScreenHeader } from "../components/ScreenHeader";
 import { EmptyState } from "../components/States";
 
 type NotebookScreenProps = {
   onOpenNote: () => void;
 };
+
+type Phase = "loading" | "ready" | "error";
 
 const mockEntries = [
   {
@@ -38,44 +41,88 @@ const mockEntries = [
   },
 ];
 
-const SHOW_EMPTY = false;
+const SKELETON_ROTATIONS = [-0.4, 0.3, -0.2];
+
+function EntryCardSkeleton({ rotate }: { rotate: number }) {
+  return (
+    <div className="entry-card entry-card--skeleton" style={{ transform: `rotate(${rotate}deg)` }}>
+      <div className="skeleton-line skeleton-line--date" />
+      <div className="skeleton-line skeleton-line--full" />
+      <div className="skeleton-line skeleton-line--medium" />
+      <div style={{ marginTop: 10 }}>
+        <div className="skeleton-line skeleton-line--tag" />
+      </div>
+    </div>
+  );
+}
 
 export function NotebookScreen({ onOpenNote }: NotebookScreenProps) {
+  const [phase, setPhase] = useState<Phase>("loading");
+
+  useEffect(() => {
+    const t = setTimeout(() => setPhase("ready"), 800);
+    return () => clearTimeout(t);
+  }, []);
+
+  const retry = () => {
+    setPhase("loading");
+    setTimeout(() => setPhase("ready"), 800);
+  };
+
   return (
     <section className="screen">
       <PrimaryScreenHeader title="手记本" kicker="2026 年 5 月" />
 
-      {SHOW_EMPTY ? (
-        <EmptyState
-          variant="journal"
-          title="手记本还是空的"
-          description="第一句话，会成为第一页。"
-        />
-      ) : (
+      {phase === "loading" && (
         <div className="entry-list">
-          {mockEntries.map((entry, i) => (
-            <button
-              key={entry.id}
-              className={`entry-card enter enter-${i + 1}`}
-              type="button"
-              onClick={onOpenNote}
-              style={{ transform: `rotate(${entry.rotate}deg)` }}
-            >
-              <p className="entry-card__date">{entry.date}</p>
-              <p className="entry-card__preview">{entry.preview}</p>
-              <div className="entry-card__mood">
-                {entry.tags.map((tag) => (
-                  <span
-                    key={tag.label}
-                    className={`entry-tag entry-tag--${tag.variant}`}
-                  >
-                    {tag.label}
-                  </span>
-                ))}
-              </div>
-            </button>
+          {SKELETON_ROTATIONS.map((r, i) => (
+            <EntryCardSkeleton key={i} rotate={r} />
           ))}
         </div>
+      )}
+
+      {phase === "error" && (
+        <div className="screen-error">
+          <p className="screen-error__text">这一页暂时没有打开，但手记还在那里。</p>
+          <button className="screen-error__retry" type="button" onClick={retry}>
+            再试一次
+          </button>
+        </div>
+      )}
+
+      {phase === "ready" && (
+        mockEntries.length === 0 ? (
+          <EmptyState
+            variant="journal"
+            title="手记本还是空的"
+            description="第一句话，会成为第一页。"
+          />
+        ) : (
+          <div className="entry-list">
+            {mockEntries.map((entry, i) => (
+              <button
+                key={entry.id}
+                className={`entry-card enter enter-${i + 1}`}
+                type="button"
+                onClick={onOpenNote}
+                style={{ transform: `rotate(${entry.rotate}deg)` }}
+              >
+                <p className="entry-card__date">{entry.date}</p>
+                <p className="entry-card__preview">{entry.preview}</p>
+                <div className="entry-card__mood">
+                  {entry.tags.map((tag) => (
+                    <span
+                      key={tag.label}
+                      className={`entry-tag entry-tag--${tag.variant}`}
+                    >
+                      {tag.label}
+                    </span>
+                  ))}
+                </div>
+              </button>
+            ))}
+          </div>
+        )
       )}
     </section>
   );

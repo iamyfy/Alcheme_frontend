@@ -1191,6 +1191,91 @@ button:disabled {
   color: var(--rose-dark);
 }
 
+/* ─── Skeleton shimmer ───────────────────────────────────────────── */
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-line {
+  height: 13px;
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    var(--line) 0%,
+    rgba(247, 242, 232, 0.9) 40%,
+    var(--line) 80%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  margin-bottom: 9px;
+}
+.skeleton-line:last-child { margin-bottom: 0; }
+.skeleton-line--date   { width: 38%; height: 11px; }
+.skeleton-line--full   { width: 90%; }
+.skeleton-line--medium { width: 62%; }
+.skeleton-line--tag    { width: 30%; height: 18px; border-radius: 8px; }
+
+/* Entry card skeleton (手记本) */
+.entry-card--skeleton {
+  pointer-events: none;
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 16px 18px;
+}
+
+/* Envelope card skeleton (信箱) */
+.envelope-card--skeleton {
+  pointer-events: none;
+  cursor: default;
+}
+
+.envelope-card--skeleton .envelope-card__body {
+  padding: 52px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ─── Screen-level error state ───────────────────────────────────── */
+.screen-error {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px;
+  text-align: center;
+}
+
+.screen-error__text {
+  font-family: var(--font-body);
+  font-size: var(--text-note);
+  color: var(--ink-muted);
+  line-height: var(--leading-body);
+  margin: 0;
+}
+
+.screen-error__retry {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--ink-muted);
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.screen-error__retry:hover {
+  background: var(--line);
+  color: var(--ink);
+}
+
 /* ─── Entrance & ambient animations ─────────────────────────────── */
 @keyframes float-up {
   from { opacity: 0; transform: translateY(10px); }
@@ -2025,6 +2110,17 @@ button:disabled {
   outline-offset: 3px;
 }
 
+.input-alchemy-btn--submitting {
+  opacity: 0.75;
+  cursor: default;
+  animation: submitting-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes submitting-pulse {
+  0%, 100% { box-shadow: inset 0 -2px 0 rgba(160,90,80,0.18), 0 4px 10px rgba(180,110,100,0.20); }
+  50%       { box-shadow: inset 0 -2px 0 rgba(160,90,80,0.18), 0 6px 18px rgba(180,110,100,0.35); }
+}
+
 /* ── Floating mic FAB ── */
 .input-mic-fab {
   position: absolute;
@@ -2304,6 +2400,61 @@ button:disabled {
   line-height: var(--leading-body);
   margin: 0;
   white-space: pre-line;
+}
+
+/* ─── Letter detail: opening animation ──────────────────────────── */
+.letter-open-stage {
+  position: relative;
+}
+
+.letter-open-flap {
+  position: absolute;
+  top: -4px;
+  left: 0;
+  right: 0;
+  height: 80px;
+  z-index: 10;
+  transform-origin: center top;
+  pointer-events: none;
+  transition:
+    transform 0.46s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.30s ease 0.14s;
+}
+
+.letter-open-flap--open {
+  transform: perspective(600px) rotateX(-175deg);
+  opacity: 0;
+}
+
+.letter-open-seal {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.letter-open-content {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.40s ease,
+    transform 0.46s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.letter-open-content--visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .letter-open-flap {
+    transform: none !important;
+    transition: opacity 0.15s ease;
+  }
+  .letter-open-content {
+    transform: none !important;
+    transition: opacity 0.15s ease;
+  }
 }
 
 /* ─── Global focus-visible base ─────────────────────────────────── */

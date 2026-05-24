@@ -29,9 +29,16 @@ export function InputScreen({ onBack, onSubmit }: InputScreenProps) {
   const [energy, setEnergy] = useState<string>();
   const [time] = useState(getNow);
   const [date] = useState(getDateLabel);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const charCount = content.length;
-  const canSubmit = content.trim().length > 0;
+  const canSubmit = content.trim().length > 0 && !isSubmitting;
+
+  const handleSubmit = () => {
+    if (!canSubmit) return;
+    setIsSubmitting(true);
+    setTimeout(onSubmit, 520);
+  };
 
   return (
     <div className="input-fullscreen">
@@ -93,12 +100,12 @@ export function InputScreen({ onBack, onSubmit }: InputScreenProps) {
         <span className="input-wordcount">{charCount} 字</span>
         <div className="input-bottombar__tools">
           <button
-            className="input-alchemy-btn"
+            className={`input-alchemy-btn${isSubmitting ? " input-alchemy-btn--submitting" : ""}`}
             type="button"
             disabled={!canSubmit}
-            onClick={() => { if (canSubmit) onSubmit(); }}
+            onClick={handleSubmit}
           >
-            开始提炼
+            {isSubmitting ? "照亮中 ✦" : "开始提炼 ✦"}
           </button>
         </div>
       </div>
