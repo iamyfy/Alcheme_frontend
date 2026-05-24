@@ -38,7 +38,15 @@ export async function apiRequest<T>(path: string, init?: RequestInit): Promise<T
   });
 
   if (!response.ok) {
-    throw new ApiError(response.status, `Request failed: ${response.status}`);
+    // Backend error envelope: { error: { code, message, request_id } }
+    let message = `Request failed: ${response.status}`;
+    try {
+      const body = await response.json();
+      if (body?.error?.message) message = body.error.message;
+    } catch {
+      // ignore parse failure — use the fallback message above
+    }
+    throw new ApiError(response.status, message);
   }
 
   return response.json() as Promise<T>;

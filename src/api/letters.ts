@@ -9,6 +9,8 @@ export type LetterListItem = {
   type: LetterType;
   content: string;
   is_read: boolean;
+  // read_at is null until the letter is first read (confirmed in lettersService.ts)
+  read_at: string | null;
   created_at: string;
 };
 
@@ -33,8 +35,10 @@ export function markLetterRead(id: string): Promise<MarkReadResult> {
   return apiRequest<MarkReadResult>(`/v1/letters/${id}/read`, { method: "POST" });
 }
 
-// Not explicitly defined in the contract — LetterDetailScreen uses list data
-// passed down as props for phase 1. Add GET /v1/letters/:id if backend defines it.
-export function getLetter(id: string): Promise<LetterListItem> {
-  return apiRequest<LetterListItem>(`/v1/letters/${id}`);
+// ⚠ NO BACKEND ROUTE: GET /v1/letters/:id does not exist in the backend router.
+// LetterDetailScreen must receive data via props (from the list) until the
+// backend team adds this endpoint. Do NOT call this in production code.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function getLetter(_id: string): Promise<LetterListItem> {
+  return Promise.reject(new Error("GET /v1/letters/:id is not yet implemented by the backend"));
 }
