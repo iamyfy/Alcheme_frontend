@@ -2951,7 +2951,7 @@ a:focus-visible,
 
 /* Title sits closer to the back button without kicker below it */
 .journal-detail-screen .page-title {
-  margin-bottom: 0;
+  margin-bottom: 10px;
 }
 
 .journal-detail-section {
@@ -3146,7 +3146,7 @@ a:focus-visible,
 .jd-popover {
   position: absolute;
   top: 68px;   /* padding-top 28px + half of header-top 72px ≈ button bottom */
-  right: 0;
+  right: 22px; /* matches screen padding-right → aligns with button right edge */
   z-index: 51;
   min-width: 132px;
   background: var(--paper-soft);
