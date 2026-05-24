@@ -2864,56 +2864,66 @@ a:focus-visible,
 
 /* ─── Journal Note Detail (手记本 entry detail) ─────────────────────── */
 
-/* Read-only energy sticker row ── */
-.journal-detail-energy {
+/* Date · energy meta row ── */
+.journal-detail-meta {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
+  justify-content: space-between;
+  margin-bottom: 22px;
 }
 
-.journal-detail-energy__icon {
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
+.journal-detail-meta__date {
+  font-family: var(--font-ui);
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+}
+
+.journal-detail-meta__energy {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   background: var(--sticker-bg, rgba(200, 190, 175, 0.2));
-  border: 1px solid var(--sticker-border, rgba(180, 160, 130, 0.4));
+  border: 1px solid var(--sticker-border, rgba(180, 160, 130, 0.35));
+  border-radius: 999px;
+  padding: 3px 10px 3px 4px;
+}
+
+.journal-detail-meta__energy-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
 }
 
-.journal-detail-energy__icon svg {
+.journal-detail-meta__energy-icon svg {
   width: 100%;
   height: 100%;
 }
 
-.journal-detail-energy__text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.journal-detail-energy__hint {
+.journal-detail-meta__energy-label {
   font-family: var(--font-ui);
   font-size: var(--text-caption);
   color: var(--ink-muted);
-  opacity: 0.7;
-}
-
-.journal-detail-energy__value {
-  font-family: var(--font-ui);
-  font-size: var(--text-note);
-  color: var(--ink-muted);
   font-weight: var(--weight-medium);
+  line-height: 1;
 }
 
 .journal-detail-screen {
   display: flex;
   flex-direction: column;
   padding-bottom: 32px;
+}
+
+/* Tighten header → meta-row gap; kicker is gone so less vertical air needed */
+.journal-detail-screen .screen-header {
+  margin-bottom: 10px;
+}
+
+/* Title sits closer to the back button without kicker below it */
+.journal-detail-screen .page-title {
+  margin-bottom: 0;
 }
 
 .journal-detail-section {

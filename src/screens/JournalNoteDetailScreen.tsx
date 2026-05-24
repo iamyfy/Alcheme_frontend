@@ -71,31 +71,27 @@ export function JournalNoteDetailScreen({ onBack }: JournalNoteDetailScreenProps
 
   return (
     <section className="screen journal-detail-screen">
-      <SecondaryScreenHeader
-        kicker={mockNote.date}
-        title="手记详情"
-        onBack={onBack}
-      />
+      <SecondaryScreenHeader title="手记详情" onBack={onBack} />
 
-      {/* ── 当时能量 ──────────────────────────────── */}
-      {energyOpt && (
-        <div className="journal-detail-energy enter enter-1" aria-label={`当时能量：${energyOpt.label}`}>
+      {/* ── 日期 · 能量 meta 行 ──────────────────── */}
+      <div className="journal-detail-meta enter enter-1">
+        <span className="journal-detail-meta__date">{mockNote.date}</span>
+        {energyOpt && (
           <span
-            className="journal-detail-energy__icon"
+            className="journal-detail-meta__energy"
+            aria-label={`当时能量：${energyOpt.label}`}
             style={{
               "--sticker-bg": energyOpt.bgColor,
               "--sticker-border": energyOpt.borderColor,
             } as CSSProperties}
-            aria-hidden="true"
           >
-            <energyOpt.Icon />
+            <span className="journal-detail-meta__energy-icon" aria-hidden="true">
+              <energyOpt.Icon />
+            </span>
+            <span className="journal-detail-meta__energy-label">{energyOpt.label}</span>
           </span>
-          <span className="journal-detail-energy__text">
-            <span className="journal-detail-energy__hint">当时的能量</span>
-            <span className="journal-detail-energy__value">{energyOpt.label}</span>
-          </span>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* ── 主线标题 ──────────────────────────────── */}
       <div className="journal-detail-section enter enter-2">
