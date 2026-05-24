@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alcheme · 项目开发文档 v2026.05.16</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Georgia, serif; background: #FDFAF5; color: #2C2416; line-height: 1.6; }
+
+.header { background: #2C2416; padding: 36px 24px 28px; text-align: center; }
+.header-eyebrow { font-size: 11px; letter-spacing: 5px; color: #C5A572; margin-bottom: 10px; text-transform: uppercase; }
+.header h1 { font-size: 26px; color: #FFF8EE; font-weight: 700; margin-bottom: 6px; }
+.header p { color: #A89080; font-size: 12px; }
+
+.nav { background: #3D3020; display: flex; overflow-x: auto; border-bottom: 1px solid #2C2416; }
+.nav-btn { padding: 14px 18px; font-size: 13px; color: #A89080; cursor: pointer; border: none; background: none; font-family: Georgia, serif; white-space: nowrap; border-bottom: 3px solid transparent; transition: all 0.2s; }
+.nav-btn:hover { color: #F0E6D3; }
+.nav-btn.active { color: #C5A572; border-bottom-color: #C5A572; }
+.nav-btn.has-sub.active { border-bottom-color: transparent; background: #2C2416; color: #C5A572; }
+
+.subnav { background: #2C2416; display: none; flex-wrap: wrap; padding: 0 16px; border-bottom: 1px solid #3D3020; }
+.subnav.active { display: flex; }
+.subnav-btn { padding: 10px 14px; font-size: 12px; color: #7A6A5A; cursor: pointer; border: none; background: none; font-family: Georgia, serif; white-space: nowrap; border-bottom: 2px solid transparent; transition: all 0.2s; }
+.subnav-btn:hover { color: #C5A572; }
+.subnav-btn.active { color: #C5A572; border-bottom-color: #C5A572; }
+
+.container { max-width: 880px; margin: 0 auto; padding: 32px 20px 60px; }
+.section { display: none; }
+.section.active { display: block; }
+
+.page-title { font-size: 22px; font-weight: 700; color: #2C2416; margin-bottom: 4px; }
+.page-sub { font-size: 13px; color: #A89080; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid #E8DDD0; }
+.block-title { font-size: 16px; font-weight: 700; color: #2C2416; margin: 28px 0 12px; }
+.block-title:first-of-type { margin-top: 0; }
+
+.tip { font-size: 13px; color: #4A3C2E; background: #F5EDE0; border-left: 3px solid #C5A572; padding: 12px 16px; border-radius: 0 8px 8px 0; margin-bottom: 16px; line-height: 1.7; }
+.tip-red { background: #F5EAE8; border-left-color: #C47A6A; color: #4A2E2A; }
+.tip-green { background: #E8F2E9; border-left-color: #7A9E7E; color: #2A4A2E; }
+.tip-blue { background: #E5EFF5; border-left-color: #6A8FAB; color: #2A3A4A; }
+.tip-purple { background: #EEE9F5; border-left-color: #8B7BAB; color: #2A2A4A; }
+
+.card { background: white; border: 1px solid #E8DDD0; border-radius: 10px; padding: 18px 20px; margin-bottom: 14px; }
+.card-title { font-size: 14px; font-weight: 700; color: #2C2416; margin-bottom: 8px; }
+
+.code-block { background: #1E1A14; border-radius: 10px; padding: 20px 24px; font-family: monospace; font-size: 13px; line-height: 2.2; margin-bottom: 16px; overflow-x: auto; }
+.code-row { display: flex; gap: 16px; }
+
+.tbl { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px; }
+.tbl thead tr { background: #2C2416; color: white; }
+.tbl th { padding: 10px 14px; text-align: left; font-weight: 600; }
+.tbl td { padding: 10px 14px; border-bottom: 1px solid #F0E8E0; vertical-align: top; line-height: 1.6; }
+.tbl tr:nth-child(odd) td { background: white; }
+.tbl tr:nth-child(even) td { background: #FDFAF5; }
+.tbl .td-code { font-family: monospace; font-size: 12px; color: #6A8FAB; }
+.tbl .td-bold { font-weight: 700; }
+
+.steps { display: flex; flex-direction: column; gap: 0; margin-bottom: 20px; }
+.step { display: flex; gap: 16px; }
+.step-left { display: flex; flex-direction: column; align-items: center; width: 44px; flex-shrink: 0; }
+.step-circle { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: white; flex-shrink: 0; }
+.step-line { width: 2px; background: #E8DDD0; flex: 1; margin: 4px 0; min-height: 12px; }
+.step-body { background: white; border: 1px solid #E8DDD0; border-radius: 10px; padding: 14px 18px; margin-bottom: 12px; flex: 1; }
+.step-type { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.step-title { font-size: 14px; font-weight: 700; color: #2C2416; margin-bottom: 6px; }
+.step-desc { font-size: 13px; color: #6B5D4F; line-height: 1.6; }
+.step-note { font-size: 12px; color: #A89080; margin-top: 6px; font-style: italic; }
+
+.folder { margin-bottom: 8px; }
+.folder-btn { width: 100%; display: flex; justify-content: space-between; align-items: center; background: #FDFAF5; border: 1px solid #E8DDD0; border-radius: 8px; padding: 10px 14px; cursor: pointer; text-align: left; font-family: Georgia, serif; }
+.folder-btn.open { border-radius: 8px 8px 0 0; background: #F0E6D3; }
+.folder-name { font-family: monospace; font-weight: 700; font-size: 13px; }
+.folder-desc { font-size: 12px; color: #6B5D4F; margin-left: 8px; }
+.folder-arrow { color: #A89080; font-size: 12px; }
+.files { border: 1px solid #E8DDD0; border-top: none; border-radius: 0 0 8px 8px; display: none; }
+.files.open { display: block; }
+.file-row { display: flex; align-items: flex-start; gap: 12px; padding: 10px 14px; border-top: 1px solid #F0E8E0; }
+.file-row:nth-child(odd) { background: white; }
+.file-row:nth-child(even) { background: #FDFAF5; }
+.file-name { font-family: monospace; font-size: 12px; min-width: 195px; flex-shrink: 0; }
+.file-desc { font-size: 12px; color: #6B5D4F; line-height: 1.5; }
+
+.phase-block { margin-bottom: 18px; border: 1px solid #E8DDD0; border-radius: 12px; overflow: hidden; }
+.phase-header { background: #F5EDE0; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.phase-title { font-weight: 700; font-size: 15px; color: #2C2416; }
+.phase-goal { font-size: 12px; color: #6B5D4F; }
+.phase-row { display: grid; grid-template-columns: 110px 1fr; border-top: 1px solid #E8DDD0; }
+.role-cell { padding: 12px 14px; font-size: 13px; font-weight: 700; color: #6B5D4F; background: #FDFAF5; display: flex; flex-direction: column; gap: 4px; }
+.role-tag { font-size: 11px; padding: 2px 7px; border-radius: 4px; font-weight: 600; width: fit-content; }
+.task-cell { padding: 12px 16px; }
+.task-item { font-size: 13px; color: #2C2416; margin-bottom: 5px; display: flex; gap: 8px; align-items: flex-start; line-height: 1.5; }
+.dot { width: 5px; height: 5px; border-radius: 50%; margin-top: 7px; flex-shrink: 0; }
+
+.insight { display: flex; gap: 14px; background: white; border: 1px solid #E8DDD0; border-radius: 10px; padding: 16px; margin-bottom: 12px; }
+.insight-num { width: 34px; height: 34px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; margin-top: 2px; }
+.insight-title { font-weight: 700; font-size: 14px; color: #2C2416; margin-bottom: 5px; }
+.insight-desc { font-size: 13px; color: #6B5D4F; line-height: 1.6; }
+
+.person-card { border-radius: 12px; overflow: hidden; border: 1px solid #E8DDD0; margin-bottom: 18px; }
+.person-header { padding: 14px 20px; }
+.person-name { font-size: 17px; font-weight: 700; color: white; }
+.person-role-line { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 3px; }
+.person-body { padding: 16px 20px; background: white; }
+.person-row { display: flex; gap: 12px; margin-bottom: 8px; font-size: 13px; line-height: 1.6; }
+.person-lbl { font-weight: 700; color: #2C2416; min-width: 56px; flex-shrink: 0; }
+.person-val { color: #6B5D4F; }
+.person-sec { font-size: 11px; font-weight: 700; color: #A89080; letter-spacing: 1px; text-transform: uppercase; margin: 14px 0 8px; }
+
+/* 整体结构 overview diagram */
+.arch-diagram { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-bottom: 20px; border: 1px solid #E8DDD0; border-radius: 14px; overflow: hidden; }
+.arch-half-header { padding: 14px 20px; font-size: 14px; font-weight: 700; }
+.arch-fe-header { background: #EEE9F5; color: #3A2A6A; }
+.arch-be-header { background: #E5EFF5; color: #1A3A5A; }
+.arch-sub { padding: 0 16px 16px; }
+.arch-box { background: white; border: 1px solid #E8DDD0; border-radius: 8px; padding: 10px 14px; margin-top: 10px; }
+.arch-box-title { font-weight: 700; font-size: 13px; color: #2C2416; margin-bottom: 4px; }
+.arch-box-sub { font-size: 12px; color: #6B5D4F; line-height: 1.5; }
+.arch-full { grid-column: 1 / -1; padding: 14px 20px; background: #F5EDE0; border-top: 1px solid #E8DDD0; }
+.arch-full-title { font-size: 13px; font-weight: 700; color: #7A5A30; }
+.arch-full-desc { font-size: 12px; color: #6B5D4F; margin-top: 3px; }
+
+/* 后端三层 */
+.be-layer { border: 1px solid #E8DDD0; border-radius: 10px; overflow: hidden; margin-bottom: 12px; }
+.be-layer-head { padding: 10px 16px; display: flex; align-items: center; gap: 10px; }
+.be-layer-title { font-size: 14px; font-weight: 700; }
+.be-layer-sub { font-size: 12px; color: #A89080; }
+.be-layer-body { padding: 12px 16px; background: white; border-top: 1px solid #E8DDD0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.be-item { background: #FDFAF5; border: 1px solid #E8DDD0; border-radius: 7px; padding: 10px 12px; }
+.be-item-name { font-family: monospace; font-size: 12px; font-weight: 700; color: #6A8FAB; margin-bottom: 3px; }
+.be-item-desc { font-size: 12px; color: #6B5D4F; line-height: 1.5; }
+
+.footer { text-align: center; padding: 28px 0 8px; font-size: 12px; color: #A89080; border-top: 1px solid #E8DDD0; margin-top: 40px; }
+
+@media (max-width: 600px) {
+  .arch-diagram { grid-template-columns: 1fr; }
+  .be-layer-body { grid-template-columns: 1fr; }
+  .phase-row { grid-template-columns: 80px 1fr; }
+  .file-name { min-width: 140px; font-size: 11px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-eyebrow">Alcheme · 项目开发文档</div>
+  <h1>技术架构 · 分工 · 执行计划</h1>
+  <p>2026年5月16日 · 内部文档，供团队协作参考</p>
+</div>
+
+<div class="nav">
+  <button class="nav-btn active" onclick="switchPrimary('overview', this)">📁 整体结构</button>
+  <button class="nav-btn has-sub" onclick="switchPrimary('modules', this)">🔍 模块详解</button>
+  <button class="nav-btn" onclick="switchPrimary('flows', this)">🔁 链路全览</button>
+  <button class="nav-btn" onclick="switchPrimary('team', this)">👥 团队分工</button>
+</div>
+
+<div class="subnav" id="subnav-modules">
+  <button class="subnav-btn active" onclick="switchSub('frontend', this)">📱 前端详解</button>
+  <button class="subnav-btn" onclick="switchSub('backend', this)">⚙️ 后端详解</button>
+</div>
+
+<div class="container">
+
+<!-- ===================== 整体结构 ===================== -->
+<div id="section-overview" class="section active">
+  <div class="page-title">整体项目结构</div>
+  <div class="page-sub">两大板块：前端 + 后端。后端再分三层：平台（Supabase）/ 代码（Railway 上的两个 Service）/ Prompt 内容。</div>
+
+
+  <div class="arch-diagram">
+    <div>
+      <div class="arch-half-header arch-fe-header">📱 前端</div>
+      <div class="arch-sub">
+        <div class="arch-box"><div class="arch-box-title">React Web App</div><div class="arch-box-sub">手机浏览器打开 · 部署 Vercel · 推代码自动更新</div></div>
+        <div class="arch-box"><div class="arch-box-title">screens / components / hooks / api</div><div class="arch-box-sub">四个文件夹，各司其职，互不干扰</div></div>
+        <div class="arch-box"><div class="arch-box-title">两种连接方式</div><div class="arch-box-sub">→ 后端 API（说说提炼，需保护 Key）<br>→ Supabase 直连（读写手记/信箱，安全）</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="arch-half-header arch-be-header">⚙️ 后端</div>
+      <div class="arch-sub">
+        <div class="arch-box"><div class="arch-box-title">平台层 · Supabase</div><div class="arch-box-sub">数据库 4 张表 + Auth 登录 + Storage 语音存储</div></div>
+        <div class="arch-box"><div class="arch-box-title">代码层 · Railway</div><div class="arch-box-sub">Service 1（说说接口 / 24h 在线）<br>Service 2（来信 Agent / 每晚定时）<br>shared/（db 读写 / Claude 调用，两者共用）</div></div>
+        <div class="arch-box"><div class="arch-box-title">Prompt 层 · server/prompts/</div><div class="arch-box-sub">说说提炼 prompt + 六种来信 prompt<br>代码只负责调用，内容由 Prompt 工程师打磨</div></div>
+      </div>
+    </div>
+    <div class="arch-full">
+      <div class="arch-full-title">🗂️ GitHub 仓库 + 部署自动化 · 搭一次不用管</div>
+      <div class="arch-full-desc">推代码到 main 分支 → Vercel 自动更新前端，Railway 自动更新后端两个 Service。Supabase 存数据，不需要部署。</div>
+    </div>
+  </div>
+
+  <div class="block-title">项目文件夹结构</div>
+  <div class="code-block">
+    <div class="code-row"><span style="color:#A89080">alcheme/</span></div>
+    <div class="code-row"><span style="color:#8B7BAB;min-width:230px">├── 📱 app/</span><span style="color:#5A5248">前端 · React · 部署 Vercel</span></div>
+    <div class="code-row"><span style="color:#6A8FAB;min-width:230px">├── ⚙️  server/</span><span style="color:#5A5248">后端全部代码 · 部署 Railway</span></div>
+    <div class="code-row"><span style="color:#6A8FAB;min-width:230px">│   ├── service1/</span><span style="color:#5A5248">说说接口 · 24h 在线 · 接收前端请求，调 Claude 提炼</span></div>
+    <div class="code-row"><span style="color:#7A9E7E;min-width:230px">│   ├── service2/</span><span style="color:#5A5248">来信 Agent · 每晚定时 · 判断触发，生成信件</span></div>
+    <div class="code-row"><span style="color:#6A8FAB;min-width:230px">│   ├── shared/</span><span style="color:#5A5248">共享代码 · 两个 Service 都用 · db 读写 + Claude 客户端</span></div>
+    <div class="code-row"><span style="color:#C47A6A;min-width:230px">│   └── prompts/</span><span style="color:#5A5248">Prompt 文件 · Prompt 工程师维护内容，后端维护调用</span></div>
+    <div class="code-row"><span style="color:#8B7BAB;min-width:230px">├── 🗄️  supabase/</span><span style="color:#5A5248">数据库建表语句 · migrations 版本管理</span></div>
+    <div class="code-row"><span style="color:#A89080;min-width:230px">└── 📄 .env.example</span><span style="color:#5A5248">所有环境变量名（不含真实值）</span></div>
+  </div>
+
+
+  <div class="block-title">数据库 4 张核心表</div>
+  <table class="tbl">
+    <thead><tr><th>表名</th><th>存什么</th><th>核心字段</th></tr></thead>
+    <tbody>
+      <tr><td class="td-bold td-code">users</td><td>用户账号</td><td class="td-code">id, email, created_at</td></tr>
+      <tr><td class="td-bold td-code">notes</td><td>每篇手记（用户输入 + AI提炼结果）<br><span style="font-size:11px;color:#A89080">文字输入：raw_input存文字，voice_url为空<br>语音输入：raw_input存Whisper转写文字，voice_url存音频链接</span></td><td class="td-code">id, user_id, raw_input, ai_distilled, second_voice, voice_url, whisper_used, created_at</td></tr>
+      <tr><td class="td-bold td-code">note_summaries</td><td>手记摘要，专门给 Agent 读，不是给用户看的</td><td class="td-code">id, note_id, summary_text, narrative_tags</td></tr>
+      <tr><td class="td-bold td-code">letters</td><td>每封来信，Agent 生成后存这里</td><td class="td-code">id, user_id, type, content, is_read, created_at</td></tr>
+    </tbody>
+  </table>
+  <div class="tip tip-blue">💡 <code>note_summaries</code> 是 Agent 的「原料库」。每次用户保存手记，后台自动生成一条简短摘要。Agent 每晚读摘要而非全文，大幅减少 token 消耗，降低成本。</div>
+</div>
+
+<!-- ===================== 模块详解 ===================== -->
+<div id="section-modules" class="section">
+
+  <!-- 前端详解（v3 原文） -->
+  <div id="sub-frontend" class="subsection">
+    <div class="page-title">前端详解</div>
+    <div class="page-sub">前端工程师负责 · React + TypeScript · 部署到 Vercel · 用户看到的一切都在这里</div>
+
+    <div class="tip tip-purple">📱 <strong>Demo 阶段策略：用普通 React，不做原生 App。</strong>用户点链接在手机浏览器打开，体验接近 App。等内测验证了产品方向，正式上线时再用 React Native 重写 App 版本。普通 React 的好处：开发更快、AI 写代码更稳定、Vercel 部署推代码就自动更新。</div>
+
+    <div class="block-title">文件结构</div>
+
+    <div class="folder"><button class="folder-btn" onclick="toggleFolder(this)"><div><span class="folder-name" style="color:#8B7BAB">📂 app/components/</span><span class="folder-desc">可复用 UI 零件，先建这里再做 screens</span></div><span class="folder-arrow">▼</span></button><div class="files"><div class="file-row"><span class="file-name" style="color:#8B7BAB">📄 AlchemyAnimation.tsx</span><span class="file-desc">炼金师执笔 + 字幕蹦出动画，AlchemyScreen 引用，产品气质核心</span></div><div class="file-row"><span class="file-name" style="color:#8B7BAB">📄 NoteCard.tsx</span><span class="file-desc">手记列表里的单项卡片，NotebookScreen 引用</span></div><div class="file-row"><span class="file-name" style="color:#8B7BAB">📄 LetterEnvelope.tsx</span><span class="file-desc">信封打开动画，LetterDetailScreen 引用</span></div><div class="file-row"><span class="file-name" style="color:#8B7BAB">📄 AudioPlayer.tsx</span><span class="file-desc">语音播放器，拿 voice_url 直接播放（阶段二）</span></div><div class="file-row"><span class="file-name" style="color:#8B7BAB">📄 VoiceRecorder.tsx</span><span class="file-desc">录音按钮 + 波形显示（阶段二）</span></div><div class="file-row"><span class="file-name" style="color:#8B7BAB">📄 LoadingSpinner.tsx</span><span class="file-desc">通用等待状态，多个 screens 引用</span></div></div></div>
+
+    <div class="folder"><button class="folder-btn" onclick="toggleFolder(this)"><div><span class="folder-name" style="color:#8B7BAB">📂 app/screens/</span><span class="folder-desc">每个页面一个文件，只管显示什么</span></div><span class="folder-arrow">▼</span></button><div class="files"><div class="file-row"><span class="file-name" style="color:#8B7BAB">📄 HomeScreen.tsx</span><span class="file-desc">首页，Logo + 「说说」按钮，新用户跳引导页，老用户跳 InputScreen</span></div><div class="file-row"><span class="file-name" style="color:#8B7BAB">📄 OnboardingScreen.tsx</span><span class="file-desc">新用户引导页，2-3 屏介绍产品，最后一屏引导进 InputScreen</span></div><div class="file-row"><span class="file-name" style="color:#8B7BAB">📄 InputScreen.tsx</span><span class="file-desc">倾诉页，文字输入框，提交后调 useAlchemy hook</span></div><div class="file-row"><span class="file-name" style="color:#8B7BAB">📄 AlchemyScreen.tsx</span><span class="file-desc">炼金动画页，等待期间播放动画，结果返回后自动跳转 NoteDetailScreen</span></div><div class="file-row"><span class="file-name" style="color:#8B7BAB">📄 NotebookScreen.tsx</span><span class="file-desc">手记列表，时间轴排列，调 useNotebook hook 拉数据</span></div><div class="file-row"><span class="file-name" style="color:#8B7BAB">📄 NoteDetailScreen.tsx</span><span class="file-desc">单篇手记详情，AI 提炼 + 原始输入 + 录音入口（阶段二）</span></div><div class="file-row"><span class="file-name" style="color:#8B7BAB">📄 MailboxScreen.tsx</span><span class="file-desc">信箱列表，阶段一空状态，阶段二调 useMailbox hook 接真实来信</span></div><div class="file-row"><span class="file-name" style="color:#8B7BAB">📄 LetterDetailScreen.tsx</span><span class="file-desc">单封信详情，信纸排版，信封打开动效</span></div><div class="file-row"><span class="file-name" style="color:#8B7BAB">📄 RecordScreen.tsx</span><span class="file-desc">录音页（阶段二），调 useVoice hook</span></div></div></div>
+
+    <div class="folder"><button class="folder-btn" onclick="toggleFolder(this)"><div><span class="folder-name" style="color:#8B7BAB">📂 app/hooks/</span><span class="folder-desc">状态管理，调用 api/，把结果和状态还给 screens</span></div><span class="folder-arrow">▼</span></button><div class="files"><div class="file-row"><span class="file-name" style="color:#8B7BAB">📄 useAlchemy.ts</span><span class="file-desc">调 api/alchemy.ts，管理 loading/result/error，还给 InputScreen 和 AlchemyScreen</span></div><div class="file-row"><span class="file-name" style="color:#8B7BAB">📄 useNotebook.ts</span><span class="file-desc">调 api/notes.ts 读写手记，本地缓存，还给 NotebookScreen 和 NoteDetailScreen</span></div><div class="file-row"><span class="file-name" style="color:#8B7BAB">📄 useMailbox.ts</span><span class="file-desc">调 api/mailbox.ts 读取信件，标记已读，还给 MailboxScreen 和 LetterDetailScreen</span></div><div class="file-row"><span class="file-name" style="color:#8B7BAB">📄 useAuth.ts</span><span class="file-desc">管理登录状态，直连 Supabase Auth，判断是否新用户</span></div></div></div>
+
+    <div class="folder"><button class="folder-btn" onclick="toggleFolder(this)"><div><span class="folder-name" style="color:#8B7BAB">📂 app/api/</span><span class="folder-desc">纯请求函数，跟 React 无关，只管发请求拿数据</span></div><span class="folder-arrow">▼</span></button><div class="files"><div class="file-row"><span class="file-name" style="color:#8B7BAB">📄 alchemy.ts</span><span class="file-desc">POST 到后端 /alchemy，拿回 AI 提炼结果。必须经过后端（保护 Claude API Key）</span></div><div class="file-row"><span class="file-name" style="color:#8B7BAB">📄 notes.ts</span><span class="file-desc">直连 Supabase 读写 notes 表（用 anon key，安全）</span></div><div class="file-row"><span class="file-name" style="color:#8B7BAB">📄 mailbox.ts</span><span class="file-desc">直连 Supabase 读取 letters 表</span></div><div class="file-row"><span class="file-name" style="color:#8B7BAB">📄 upload.ts</span><span class="file-desc">POST 语音文件到后端 /upload，拿回 Storage URL（阶段二）</span></div></div></div>
+
+    <div class="block-title">四个文件夹的划分与调用关系</div>
+
+    <div class="tip" style="margin-bottom:20px">核心原则：<strong>变化原因不同的代码，放在不同文件夹。</strong>改一件事不影响另一件事。</div>
+
+    <table class="tbl" style="margin-bottom:20px">
+      <thead><tr><th style="width:25%">文件夹</th><th style="width:25%">负责什么</th><th style="width:25%">改变原因</th><th style="width:25%">跟谁说话</th></tr></thead>
+      <tbody>
+        <tr><td><code style="color:#8B7BAB">components/</code></td><td>可复用的 UI 零件<br><span style="font-size:11px;color:#A89080">动画、卡片、按钮</span></td><td>零件样式或行为要改</td><td>被 screens 引用</td></tr>
+        <tr><td><code style="color:#8B7BAB">screens/</code></td><td>每个页面，只管显示什么<br><span style="font-size:11px;color:#A89080">不管数据从哪来</span></td><td>设计改了、文案调了</td><td>调用 hooks，引用 components</td></tr>
+        <tr><td><code style="color:#8B7BAB">hooks/</code></td><td>screens 和 api 的中间人<br><span style="font-size:11px;color:#A89080">管理加载中/成功/失败状态</span></td><td>请求逻辑变了、需要复用</td><td>被 screens 调用，调用 api</td></tr>
+        <tr><td><code style="color:#8B7BAB">api/</code></td><td>纯请求函数，跟 React 无关<br><span style="font-size:11px;color:#A89080">只管发请求拿数据</span></td><td>接口地址变了、格式变了</td><td>被 hooks 调用，连后端或 Supabase</td></tr>
+      </tbody>
+    </table>
+
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title">例子：用户提交「说说」</div>
+      <div style="font-size:13px;color:#6B5D4F;line-height:1.5;margin-top:8px">
+        <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px"><span style="background:#8B7BAB;color:white;border-radius:4px;padding:2px 8px;font-size:11px;white-space:nowrap;flex-shrink:0">screens</span><span>用户点提交 → InputScreen 调用 <code>useAlchemy.submit(text)</code>，自己不管后续</span></div>
+        <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px"><span style="background:#7A6A9A;color:white;border-radius:4px;padding:2px 8px;font-size:11px;white-space:nowrap;flex-shrink:0">hooks</span><span>useAlchemy 把 <code>loading=true</code> 告诉 screens（显示炼金动画）→ 调 api/ 发请求</span></div>
+        <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px"><span style="background:#6A5A8A;color:white;border-radius:4px;padding:2px 8px;font-size:11px;white-space:nowrap;flex-shrink:0">api</span><span>POST 到后端 /alchemy，等结果回来</span></div>
+        <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px"><span style="background:#7A6A9A;color:white;border-radius:4px;padding:2px 8px;font-size:11px;white-space:nowrap;flex-shrink:0">hooks</span><span>拿到结果 → <code>loading=false</code>，<code>result=提炼内容</code> 还给 screens</span></div>
+        <div style="display:flex;align-items:flex-start;gap:10px"><span style="background:#8B7BAB;color:white;border-radius:4px;padding:2px 8px;font-size:11px;white-space:nowrap;flex-shrink:0">screens</span><span>收到 result → NoteDetailScreen 用 components/NoteCard 把提炼结果渲染出来</span></div>
+      </div>
+    </div>
+
+    <div class="block-title">AI Coding 开发流程</div>
+
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-title">Step 0 · 准备工作</div>
+      <p style="font-size:13px;color:#6B5D4F;line-height:1.7">从 GitHub 克隆仓库到本地 → 装依赖（<code>npm install</code>）→ 本地跑起来（<code>npm run dev</code>）→ 浏览器打开能看到一个空白页或默认模板页，说明环境没问题，可以开始写代码了。（这一步的目的是验证环境配置正常，不是看产品页面。）</p>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-title">Step 1 · 确认 UI 和交互逻辑（接口契约出来后才开始）</div>
+      <p style="font-size:13px;color:#6B5D4F;line-height:1.7">在已有设计稿的基础上，整理每个页面的交互逻辑文档——不只是「点了跳哪里」，还要包括每个状态：比如倾诉页「输入框为空时按钮不可点」「提交中按钮显示 loading」「提交成功跳转炼金动画页」。<br><br>同时对照接口契约做交叉检查，验证接口的准确性：<br><br>
+      · 页面需要显示的每个数据字段，接口都有返回吗？<br>
+      · 字段名是否一致？（比如页面用 <code>distilled</code>，接口返回的是 <code>ai_distilled</code>？）<br>
+      · 列表页需要的分页、排序字段有没有？<br>
+      · 空状态、错误状态下接口返回什么？</p>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-title">Step 2 · 建组件库（在任何页面之前）</div>
+      <p style="font-size:13px;color:#6B5D4F;line-height:1.7">先建一个 <code>theme.ts</code>，把颜色、字体、间距的常量定义好，所有组件引用这个文件的变量，不要在组件里直接写颜色值。<br><br>然后把产品里反复用到的零件做出来放进 components/：按钮、输入框、卡片、图标、装饰图案、炼金动画、信封打开动效等。<br><br>跳过这步直接做页面，后期改一个颜色要改十几个文件。先建好，后面省很多时间。</p>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-title">Step 3 · 用 Mock 数据逐个页面开发</div>
+      <p style="font-size:13px;color:#6B5D4F;line-height:1.7">Mock 数据就是假数据——自己造一些假的手记内容、假的来信，写在 hooks/ 里，让页面看起来有内容，不需要等后端接口。两人并行开发，互不阻塞。<br><br>按页面优先级顺序开发（见下方）。每个页面做完，在 GitHub 开一个功能分支（如 <code>feat/input-screen</code>），推上去后 Vercel 自动生成预览链接，手机浏览器打开真实看效果——字体大小、间距、按钮大小在手机上和电脑上感受完全不同。确认没问题再合并到 main。<br><br>Mock 数据要写得像真的，用有意义的文字，不要用「test1 test2」。
+
+      <details style="margin-top:14px;border:1px solid #E8DDD0;border-radius:8px;overflow:hidden">
+        <summary style="padding:12px 16px;font-size:13px;font-weight:700;color:#2C2416;cursor:pointer;background:#FDFAF5;list-style:none;display:flex;justify-content:space-between;align-items:center">
+          9 个页面的实现优先级
+          <span style="font-size:12px;color:#A89080;font-weight:400">点击展开</span>
+        </summary>
+        <div style="padding:16px;background:white">
+          <div style="margin-bottom:14px">
+            <div style="font-size:12px;font-weight:700;color:#8B7BAB;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">第一批 · 核心链路，最优先</div>
+            <table class="tbl" style="margin-bottom:0">
+              <thead><tr><th>页面</th><th>说明</th></tr></thead>
+              <tbody>
+                <tr><td><code>InputScreen</code> · 倾诉页</td><td>大输入框 + 提交按钮。空时按钮不可点，提交后调 useAlchemy 跳转炼金动画页。</td></tr>
+                <tr><td><code>NoteDetailScreen</code> · 手记详情页</td><td>AI 提炼 2-4 个点（第一人称「我」开头）+ 原始输入 + 「想用自己声音留住这句话吗？」入口。</td></tr>
+                <tr><td><code>NotebookScreen</code> · 手记本列表</td><td>所有手记按时间排列，每条显示日期 + 提炼第一句，点击进详情。</td></tr>
+                <tr><td><code>MailboxScreen</code> · 信箱页（空状态）</td><td>界面做完整，显示空状态文案，Agent 上线后接真实来信。</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:#6B5D4F;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">第二批 · 阶段一完成</div>
+            <table class="tbl" style="margin-bottom:0">
+              <thead><tr><th>页面</th><th>说明</th></tr></thead>
+              <tbody>
+                <tr><td><code>HomeScreen</code> · 首页 + 引导页</td><td>首页：Logo + 邀请文案 + 「说说」按钮。引导页：2-3 屏帮新用户理解产品。文案比设计更重要，先想清楚说什么再做页面。</td></tr>
+                <tr><td><code>AlchemyScreen</code> · 炼金动画页</td><td>可先用简单 loading 占位，阶段一内完成打磨。字幕蹦出、执笔动效用 Framer Motion 实现。</td></tr>
+                <tr><td><code>LetterDetailScreen</code> · 来信详情页</td><td>信纸风格排版，信封打开动效。阶段一用 Mock 数据做好样式。</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+      </p>
+    </div>
+
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title">Step 4 · 联调——替换成真实 API</div>
+      <p style="font-size:13px;color:#6B5D4F;line-height:1.7">后端接口做好后，联调由后端工程师主导，前端工程师配合。具体要做的事：<br><br>
+      <strong>① 补全 api/ 文件夹</strong>——把真实的请求函数写进去。<code>api/notes.ts</code> 写真实的 Supabase 查询，<code>api/alchemy.ts</code> 写真实的后端请求地址（格式参照接口契约）。<br><br>
+      <strong>② hooks/ 里替换假数据</strong>——把写死的 Mock 数据删掉，改成调用 api/ 里的函数。<br><br>
+      <strong>③ 验证数据格式</strong>——后端返回的字段名和 Mock 数据里的字段名是否一致。最常见的问题：Mock 里叫 <code>distilled</code>，后端返回叫 <code>ai_distilled</code>，页面就显示不出来。接口契约定好就是为了减少这类问题。</p>
+    </div>
+
+    <div class="block-title">前端工程师的难点</div>
+    <table class="tbl">
+      <thead><tr><th>难点</th><th>说明</th><th>建议</th></tr></thead>
+      <tbody>
+        <tr><td>炼金动画</td><td>字幕蹦出、执笔动效，决定产品第一印象</td><td>用 Framer Motion 库，让 AI 生成初版再反复调整感觉</td></tr>
+        <tr><td>组件一致性</td><td>多页面共用元素，风格不统一很难看</td><td>先建组件库，所有 screens 引用同一套，不要各自定义样式</td></tr>
+        <tr><td>新用户引导页文案</td><td>2-3 屏要让用户明白「说说」怎么用</td><td>文案比设计更重要，先想清楚说什么再做页面</td></tr>
+        <tr><td>Mock 数据质量</td><td>假数据要像真的才能判断页面效果</td><td>用有意义的文字，参考产品文档里的用户场景来写</td></tr>
+        <tr><td>录音兼容性（阶段二）</td><td>iOS 返回 m4a，Android 返回 webm</td><td>放阶段二专门处理，阶段一不碰</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 后端详解（v1 widget 三层结构） -->
+  <div id="sub-backend" class="subsection" style="display:none">
+    <div class="page-title">后端详解</div>
+    <div class="page-sub">后端工程师负责 · 三层结构：平台层（Supabase）/ 代码层（Railway）/ Prompt 层</div>
+
+    <div class="tip tip-blue">⚙️ <strong>后端工程师要交付的东西：</strong>① Supabase 上数据库结构可用、Auth 开通、Storage 建好 ② server/service1/ 代码推到 GitHub、Railway Service 1 能跑起来接收请求 ③ server/service2/ 代码推到 GitHub、Railway Service 2 能定时跑起来生成来信</div>
+
+    <div class="block-title">第一层：平台层 · Supabase（在网站上配置，不写代码）</div>
+
+    <div class="be-layer">
+      <div class="be-layer-head" style="background:#E8F2E9"><span style="font-size:18px">🗄️</span><div><div class="be-layer-title" style="color:#2A4A2E">数据库（PostgreSQL）</div><div class="be-layer-sub">建 4 张表，开启行级权限（用户只能读自己的数据）</div></div></div>
+      <div class="be-layer-body">
+        <div class="be-item"><div class="be-item-name">users</div><div class="be-item-desc">用户账号，Supabase Auth 自动维护，不需要手动建</div></div>
+        <div class="be-item"><div class="be-item-name">notes</div><div class="be-item-desc">手记：raw_input / ai_distilled / second_voice / voice_url / whisper_used</div></div>
+        <div class="be-item"><div class="be-item-name">note_summaries</div><div class="be-item-desc">手记摘要，专供 Agent 读，控制 token 成本（不是给用户看的）</div></div>
+        <div class="be-item"><div class="be-item-name">letters</div><div class="be-item-desc">来信：type / content / is_read，Agent 写入，前端直连读取</div></div>
+      </div>
+    </div>
+
+    <div class="be-layer">
+      <div class="be-layer-head" style="background:#E8F2E9"><span style="font-size:18px">🔐</span><div><div class="be-layer-title" style="color:#2A4A2E">Auth（用户登录）</div><div class="be-layer-sub">Supabase 控制台开启，不需要自己写登录逻辑</div></div></div>
+      <div class="be-layer-body" style="grid-template-columns:1fr">
+        <div class="be-item"><div class="be-item-name">配置 + 两种 key 的区别</div><div class="be-item-desc">控制台 → Authentication → Providers → 开启邮箱登录。同时开启 Row Level Security（行级权限）。<br><br>前端用 <code>anon key</code>（公开，配合行级权限只能读自己的数据）；后端两个 Service 用 <code>service role key</code>（管理员权限，能读所有用户数据，Agent 需要这个）。<br><br><strong>交付标志：</strong>能用邮箱注册登录，登录后拿到 JWT token。</div></div>
+      </div>
+    </div>
+
+    <div class="be-layer">
+      <div class="be-layer-head" style="background:#E8F2E9"><span style="font-size:18px">🗂️</span><div><div class="be-layer-title" style="color:#2A4A2E">Storage（语音文件存储）· 阶段二</div><div class="be-layer-sub">建一个叫 voices 的 bucket，存录音文件</div></div></div>
+      <div class="be-layer-body" style="grid-template-columns:1fr">
+        <div class="be-item"><div class="be-item-name">工作流程</div><div class="be-item-desc">前端录音 → 发给 Service 1 → Service 1 存入 Storage → 得到唯一 URL → 存入 notes.voice_url → 前端用这个 URL 直接播放</div></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-title">supabase/ 文件夹（数据库版本管理）</div>
+      <p style="font-size:13px;color:#6B5D4F;line-height:1.8">放在项目根目录，与 app/ server/ 并列。后端工程师持续维护，不是一次性配置。<br><br><code>migrations/</code> — 每次改表结构，新建一个带日期的 .sql 文件（如 <code>20260501_create_notes_table.sql</code>），推到 GitHub，有记录可追溯。早期也可以直接在 Supabase 网站 SQL 编辑器手动执行。<br><br><code>seed.sql</code> — 可选，初始测试数据，开发时用，不进生产环境。<br><br><strong>目标：</strong>任何人克隆仓库，按顺序执行 migrations/ 里的文件，能还原出完整数据库结构。</p>
+    </div>
+
+    <div class="block-title">第二层：代码层 · Railway（本地写代码，推 GitHub，Railway 自动运行）</div>
+    <div class="tip"><code>shared/</code> 是关键：两个 Service 都要读数据库、都要调用 Claude，把这些代码只写一次放 shared/，两边都 import，不重复。</div>
+
+    <div class="be-layer">
+      <div class="be-layer-head" style="background:#E5EFF5"><span style="font-size:18px">1️⃣</span><div><div class="be-layer-title" style="color:#1A3A5A">Service 1 · 说说接口（24 小时在线）</div><div class="be-layer-sub">server/service1/ · 接收前端请求，调 Claude 提炼，存摘要</div></div></div>
+      <div class="be-layer-body">
+        <div class="be-item"><div class="be-item-name">routes/alchemy.ts</div><div class="be-item-desc"><strong>最核心。</strong>接收前端 POST → 验证 JWT → 调 alchemyService → 返回提炼结果。唯一必须经后端的接口，因为 Claude API Key 不能放前端。</div></div>
+        <div class="be-item"><div class="be-item-name">services/alchemyService.ts</div><div class="be-item-desc">加载 prompts/alchemy.ts → 组合「用户输入 + prompt」→ 调 shared/claudeClient → 解析提炼点列表</div></div>
+        <div class="be-item"><div class="be-item-name">services/summaryService.ts</div><div class="be-item-desc">每次保存手记时，同步生成摘要存入 note_summaries 表，供 Service 2 晚上读取。由 alchemyService 调用。</div></div>
+        <div class="be-item"><div class="be-item-name">routes/upload.ts（阶段二）</div><div class="be-item-desc">接收录音 → 调 Whisper 转写 → 走提炼链路 → 存 Storage → 返回 URL。暂用 Whisper，后续可换多模态 LLM。</div></div>
+        <div class="be-item" style="grid-column:1/-1"><div class="be-item-name">middleware/auth.ts · rateLimit.ts · errorHandler.ts</div><div class="be-item-desc">JWT 验证（每个请求都要过）/ 限制每分钟调用次数防止 Claude 被刷 / 统一错误格式让前端收到的错误结构一致</div></div>
+      </div>
+    </div>
+
+    <div class="be-layer">
+      <div class="be-layer-head" style="background:#E5EFF5"><span style="font-size:18px">2️⃣</span><div><div class="be-layer-title" style="color:#1A3A5A">Service 2 · 来信 Agent（每晚凌晨定时运行）</div><div class="be-layer-sub">server/service2/ · 读摘要 → 判断触发 → 生成信件 → 存信箱</div></div></div>
+      <div class="be-layer-body">
+        <div class="be-item"><div class="be-item-name">runner.ts</div><div class="be-item-desc">入口。每天凌晨 2 点启动，获取活跃用户列表，逐个调 userProcessor</div></div>
+        <div class="be-item"><div class="be-item-name">userProcessor.ts</div><div class="be-item-desc">处理单个用户：读摘要 → 调 triggerEvaluator → 有触发则调 letterGenerator → 写信箱</div></div>
+        <div class="be-item"><div class="be-item-name">triggerEvaluator.ts</div><div class="be-item-desc">第一次调 Claude：摘要 + prompts/trigger.ts → 返回「触发哪种」或「暂不触发」</div></div>
+        <div class="be-item"><div class="be-item-name">letterGenerator.ts</div><div class="be-item-desc">第二次调 Claude：摘要 + 对应 prompts/letters/[类型].ts → 生成完整信件内容</div></div>
+        <div class="be-item" style="grid-column:1/-1"><div class="be-item-name">narrativeAnalyzer.ts</div><div class="be-item-desc">专用于「悄悄变了」：对比用户早期和近期手记的叙事风格变化。触发门槛最高，宁可晚发不能滥发。</div></div>
+      </div>
+    </div>
+
+    <div class="be-layer">
+      <div class="be-layer-head" style="background:#E5EFF5"><span style="font-size:18px">🔗</span><div><div class="be-layer-title" style="color:#1A3A5A">server/shared/ · 两个 Service 共用的代码</div><div class="be-layer-sub">写一次，两个 Service 都 import，不重复</div></div></div>
+      <div class="be-layer-body">
+        <div class="be-item"><div class="be-item-name">db/notesRepo.ts</div><div class="be-item-desc">notes 表的增删查改（Service 1 写，前端直连读）</div></div>
+        <div class="be-item"><div class="be-item-name">db/summariesRepo.ts</div><div class="be-item-desc">note_summaries 表的增删查改（Service 1 写，Service 2 读）</div></div>
+        <div class="be-item"><div class="be-item-name">db/lettersRepo.ts</div><div class="be-item-desc">letters 表的写入（Service 2 写，前端直连读）</div></div>
+        <div class="be-item"><div class="be-item-name">claudeClient.ts</div><div class="be-item-desc">封装 Claude API 调用，统一处理重试/超时/错误。两个 Service 都 import 这一个。</div></div>
+        <div class="be-item" style="grid-column:1/-1"><div class="be-item-name">supabaseClient.ts</div><div class="be-item-desc">Supabase SDK 初始化，用 service role key（管理员权限）。两个 Service 都 import 这一个。前端另起一个 anon key 的 client，不共用这个。</div></div>
+      </div>
+    </div>
+
+    <div class="block-title">第三层：Prompt 层 · server/prompts/（Prompt 工程师负责内容）</div>
+    <div class="tip" style="border-left-color:#C47A6A;background:#F5EAE8;color:#4A2E2A">✍️ <strong>分工边界：</strong>Prompt 工程师负责写 prompt 的内容（什么语气、视角、触发标准）；后端工程师负责维护文件结构，确保代码正确加载。改 prompt 内容不需要改任何其他代码，直接推 GitHub 即可。</div>
+
+    <div class="folder"><button class="folder-btn" onclick="toggleFolder(this)"><div><span class="folder-name" style="color:#C47A6A">📂 server/prompts/</span><span class="folder-desc">全部 prompt 文件</span></div><span class="folder-arrow">▼</span></button><div class="files">
+      <div class="file-row"><span class="file-name" style="color:#C47A6A">📄 alchemy.ts</span><span class="file-desc">「说说」AI 提炼 prompt · alchemyService.ts 读取 · 最核心，阶段一最优先打磨</span></div>
+      <div class="file-row"><span class="file-name" style="color:#C47A6A">📄 trigger.ts</span><span class="file-desc">Agent 触发判断 prompt · triggerEvaluator.ts 读取 · 定义「什么情况下写信、写哪种」</span></div>
+      <div class="file-row"><span class="file-name" style="color:#C47A6A">📄 letters/absent.ts</span><span class="file-desc">久别来信</span></div>
+      <div class="file-row"><span class="file-name" style="color:#C47A6A">📄 letters/recall.ts</span><span class="file-desc">随机回望</span></div>
+      <div class="file-row"><span class="file-name" style="color:#C47A6A">📄 letters/review.ts</span><span class="file-desc">近期回顾</span></div>
+      <div class="file-row"><span class="file-name" style="color:#C47A6A">📄 letters/deepen.ts</span><span class="file-desc">深挖同一件事</span></div>
+      <div class="file-row"><span class="file-name" style="color:#C47A6A">📄 letters/pattern.ts</span><span class="file-desc">模式发现</span></div>
+      <div class="file-row"><span class="file-name" style="color:#C47A6A">📄 letters/shift.ts</span><span class="file-desc">悄悄变了 · 最后实现，触发门槛最高</span></div>
+    </div></div>
+
+    <div class="block-title">Railway 配置 + 环境变量</div>
+    <div class="card">
+      <div class="card-title">配置步骤</div>
+      <p style="font-size:13px;color:#6B5D4F;line-height:1.8">
+        1. Railway 网站建项目，连接 GitHub 仓库<br>
+        2. 建 Service 1，根目录指向 <code>server/service1/</code>，Railway 读取其中的 <code>railway.json</code> 知道怎么启动<br>
+        3. 建 Service 2，根目录指向 <code>server/service2/</code>，同上<br>
+        4. 两个 Service 各自填写环境变量：<code>CLAUDE_API_KEY</code>、<code>SUPABASE_URL</code>、<code>SUPABASE_SERVICE_ROLE_KEY</code><br>
+        5. 之后每次推代码到 GitHub main 分支，Railway 自动拉取最新代码重启<br><br>
+        <strong>冷启动问题：</strong>Railway 低配版长时间没请求会休眠，下次请求要等 5-10 秒才响应。解决办法：升级到不休眠的套餐（几美元/月），或用定时任务每 5 分钟 ping 一次保持活跃。
+      </p>
+    </div>
+
+    <table class="tbl">
+      <thead><tr><th>Key 名称</th><th>放在哪</th><th>为什么</th></tr></thead>
+      <tbody>
+        <tr><td>Supabase URL</td><td>前端 + Railway 两个 Service 环境变量</td><td>各方都要连接 Supabase</td></tr>
+        <tr><td>Supabase anon key</td><td>前端代码里（可以公开）</td><td>专为前端设计的公开 Key，配合行级权限控制安全</td></tr>
+        <tr><td>Supabase service role key</td><td>只在 Railway 环境变量</td><td>管理员权限，绝不能暴露</td></tr>
+        <tr><td>Claude API Key</td><td>只在 Railway 环境变量</td><td>泄露会被盗用，费用全算头上</td></tr>
+      </tbody>
+    </table>
+
+    <div class="block-title">后端交付清单（按顺序）</div>
+    <table class="tbl">
+      <thead><tr><th>步骤</th><th>交付物</th><th>验收标准</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Supabase 4 张表建好，Auth 开通</td><td>控制台看到表结构，能用邮箱注册登录</td></tr>
+        <tr><td>2</td><td>shared/ 写好（db + claudeClient）</td><td>本地能连上 Supabase，能调 Claude API 拿到回复</td></tr>
+        <tr><td>3</td><td>/alchemy 接口跑通</td><td>用 Postman 发一段文字，收到 AI 提炼结果</td></tr>
+        <tr><td>4</td><td>Railway Service 1 部署成功</td><td>从公网能访问接口，前端联调成功</td></tr>
+        <tr><td>5</td><td>Agent「久别来信」跑通</td><td>手动触发 Agent，letters 表里出现一条来信记录</td></tr>
+        <tr><td>6</td><td>Railway Service 2 定时跑起来</td><td>凌晨 2 点自动执行，日志正常</td></tr>
+        <tr><td>阶段二</td><td>/upload 接口 + Storage</td><td>能上传音频，notes 表里有 voice_url</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- end section-modules -->
+
+<!-- ===================== 链路全览 ===================== -->
+<div id="section-flows" class="section">
+  <div class="page-title">链路全览</div>
+  <div class="page-sub">产品所有链路 · 每条链路把所有技术节点串起来 · 看清数据怎么流动</div>
+
+  <div class="tip">💡 <strong>两种连接方式的区别：</strong>凡是需要调用 Claude API / Whisper API 的操作，必须经过 Railway 后端（保护 API Key 不暴露在前端）。其他读写数据的操作，前端直连 Supabase，不需要绕一圈。</div>
+
+  <!-- 链路一 -->
+  <div class="block-title">链路一：注册 / 登录 · 「我的」页面</div>
+  <div class="steps">
+    <div class="step"><div class="step-left"><div class="step-circle" style="background:#8B7BAB">1</div><div class="step-line"></div></div><div class="step-body"><div class="step-type" style="color:#8B7BAB">前端 · Vercel</div><div class="step-title">用户填写邮箱 + 密码</div><div class="step-desc">新用户注册 / 老用户登录，直接调用 Supabase Auth SDK，不经过 Railway 后端</div></div></div>
+    <div class="step"><div class="step-left"><div class="step-circle" style="background:#6A8FAB">2</div><div class="step-line"></div></div><div class="step-body"><div class="step-type" style="color:#6A8FAB">Supabase Auth</div><div class="step-title">验证身份，发放 JWT token</div><div class="step-desc">Supabase 处理注册/登录逻辑，自动发验证邮件（注册时），返回 JWT token 给前端</div></div></div>
+    <div class="step"><div class="step-left"><div class="step-circle" style="background:#8B7BAB">3</div><div class="step-line"></div></div><div class="step-body"><div class="step-type" style="color:#8B7BAB">前端 · Vercel</div><div class="step-title">持有 JWT，进入产品</div><div class="step-desc">后续所有请求都携带 JWT。新用户跳引导页，老用户跳首页。</div></div></div>
+    <div class="step"><div class="step-left"><div class="step-circle" style="background:#6A8FAB">4</div><div class="step-line"></div></div><div class="step-body"><div class="step-type" style="color:#6A8FAB">「我的」页面 · 直连 Supabase · 阶段一</div><div class="step-title">账号信息 + 退出登录</div><div class="step-desc">前端直连 Supabase 读取 users 表，展示邮箱、头像、昵称。退出登录调用 Supabase Auth signOut，清除本地 JWT。</div></div></div>
+    <div class="step"><div class="step-left"><div class="step-circle" style="background:#A89080">5</div></div><div class="step-body"><div class="step-type" style="color:#A89080">「我的」页面 · 阶段二</div><div class="step-title">手记统计 / 来信统计 / 数据导出</div><div class="step-desc">前端直连 Supabase 统计 notes 表（写了多少篇、坚持了多久）和 letters 表（收到了多少封）。数据导出：将用户全部手记和来信打包，允许用户下载自己的情感资产。</div></div></div>
+  </div>
+
+  <!-- 链路二 -->
+  <div class="block-title">链路二：说说 → AI 提炼 → 保存手记 → 查看手记</div>
+  <div class="steps">
+    <div class="step"><div class="step-left"><div class="step-circle" style="background:#8B7BAB">1</div><div class="step-line"></div></div><div class="step-body"><div class="step-type" style="color:#8B7BAB">前端 · Vercel</div><div class="step-title">用户输入文字，点提交</div><div class="step-desc">携带 JWT，POST 到 Railway Service 1 的 /alchemy 接口。必须经过后端——Claude API Key 不能暴露在前端。</div></div></div>
+    <div class="step"><div class="step-left"><div class="step-circle" style="background:#6A8FAB">2</div><div class="step-line"></div></div><div class="step-body"><div class="step-type" style="color:#6A8FAB">Railway Service 1 · middleware</div><div class="step-title">JWT 验证 + 频率限制</div><div class="step-desc">auth.ts 验证 token 有效性，rateLimit.ts 防止 Claude API 被刷</div></div></div>
+    <div class="step"><div class="step-left"><div class="step-circle" style="background:#6A8FAB">3</div><div class="step-line"></div></div><div class="step-body"><div class="step-type" style="color:#6A8FAB">Railway Service 1 → Claude API</div><div class="step-title">AI 提炼</div><div class="step-desc">加载 prompts/alchemy.ts → 组合「用户输入 + prompt」→ 调 Claude API → 解析返回的 2-4 个提炼点（第一人称「我」开头）</div></div></div>
+    <div class="step"><div class="step-left"><div class="step-circle" style="background:#6A8FAB">4</div><div class="step-line"></div></div><div class="step-body"><div class="step-type" style="color:#6A8FAB">Railway Service 1 → Supabase</div><div class="step-title">同步生成手记摘要</div><div class="step-desc">summaryService 把这次倾诉的摘要写入 note_summaries 表，供 Agent 晚上读取。这一步对用户不可见。</div></div></div>
+    <div class="step"><div class="step-left"><div class="step-circle" style="background:#8B7BAB">5</div><div class="step-line"></div></div><div class="step-body"><div class="step-type" style="color:#8B7BAB">前端 · Vercel</div><div class="step-title">显示提炼结果</div><div class="step-desc">跳转炼金动画页 → 收到结果后展示 2-4 句「我……」。页面底部有轻柔邀请：「想不想用自己的声音，留住这几句话？」</div></div></div>
+    <div class="step"><div class="step-left"><div class="step-circle" style="background:#6A8FAB">6</div><div class="step-line"></div></div><div class="step-body"><div class="step-type" style="color:#6A8FAB">前端 → Supabase · 直连</div><div class="step-title">用户确认，保存手记</div><div class="step-desc">前端直接写入 Supabase notes 表（不经过后端）。原始输入 + AI 提炼结果 + 第二次叙述（如有）一起存，互不替换。</div></div></div>
+    <div class="step"><div class="step-left"><div class="step-circle" style="background:#6A8FAB">7</div></div><div class="step-body"><div class="step-type" style="color:#6A8FAB">前端 → Supabase · 直连</div><div class="step-title">查看手记本</div><div class="step-desc">前端直连 Supabase 读取 notes 表，展示手记列表和每篇详情（AI 提炼版 + 原始输入均可查看）。</div></div></div>
+  </div>
+
+  <!-- 链路二b -->
+  <div class="block-title">链路二b：语音输入 → 转写 → 提炼（阶段二）</div>
+  <div class="card">
+    <div style="font-size:13px;color:#6B5D4F;line-height:2">
+      <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:6px"><span style="background:#8B7BAB;color:white;border-radius:4px;padding:2px 8px;font-size:11px;white-space:nowrap;flex-shrink:0">前端</span><span>用户录音完成 → 音频文件 POST 到 Railway Service 1 的 /upload 接口（携带 JWT）</span></div>
+      <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:6px"><span style="background:#6A8FAB;color:white;border-radius:4px;padding:2px 8px;font-size:11px;white-space:nowrap;flex-shrink:0">Service 1 → Whisper</span><span>调 Whisper API 将音频转成文字（iOS 返回 m4a，Android 返回 webm，后端统一处理格式）</span></div>
+      <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:6px"><span style="background:#6A8FAB;color:white;border-radius:4px;padding:2px 8px;font-size:11px;white-space:nowrap;flex-shrink:0">Service 1 → Claude</span><span>转写文字走和文字输入完全相同的提炼链路（链路二 Step 3-4）</span></div>
+      <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:6px"><span style="background:#6A8FAB;color:white;border-radius:4px;padding:2px 8px;font-size:11px;white-space:nowrap;flex-shrink:0">Service 1 → Storage</span><span>音频文件存入 Supabase Storage voices bucket，拿到唯一 URL</span></div>
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="background:#6A8FAB;color:white;border-radius:4px;padding:2px 8px;font-size:11px;white-space:nowrap;flex-shrink:0">Service 1 → 前端</span><span>notes 表写入：raw_input（转写文字）+ voice_url（音频 URL）+ ai_distilled（提炼结果）→ 前端展示，用户可播放原始录音</span></div>
+    </div>
+  </div>
+
+  <!-- 链路三 -->
+  <div class="block-title">链路三：Agent 自动生成来信 → 用户查看信箱</div>
+  <div class="steps">
+    <div class="step"><div class="step-left"><div class="step-circle" style="background:#A89080">1</div><div class="step-line"></div></div><div class="step-body"><div class="step-type" style="color:#A89080">Railway Service 2 · 定时触发 · 零 token</div><div class="step-title">每天凌晨 2 点自动启动</div><div class="step-desc">不需要用户在线。从 Supabase 读取「最近 30 天有手记」的活跃用户列表，逐个处理。</div></div></div>
+    <div class="step"><div class="step-left"><div class="step-circle" style="background:#6A8FAB">2</div><div class="step-line"></div></div><div class="step-body"><div class="step-type" style="color:#6A8FAB">Service 2 → Supabase · 零 token</div><div class="step-title">读取该用户的手记摘要</div><div class="step-desc">从 note_summaries 表读摘要（不读全文），控制 token 消耗</div></div></div>
+    <div class="step"><div class="step-left"><div class="step-circle" style="background:#7A9E7E">3</div><div class="step-line"></div></div><div class="step-body"><div class="step-type" style="color:#7A9E7E">Service 2 → Claude API · 消耗 token</div><div class="step-title">第一次调 Claude：判断要不要写信、写哪种</div><div class="step-desc">摘要 + prompts/trigger.ts → Claude 返回触发类型或「暂不触发」。暂不触发则跳过该用户。</div></div></div>
+    <div class="step"><div class="step-left"><div class="step-circle" style="background:#7A9E7E">4</div><div class="step-line"></div></div><div class="step-body"><div class="step-type" style="color:#7A9E7E">Service 2 → Claude API · 消耗 token</div><div class="step-title">第二次调 Claude：生成信件内容</div><div class="step-desc">摘要 + 对应类型的 prompts/letters/[类型].ts → 生成完整信件。这封信的质量由 prompt 决定，是产品魔法感的来源。</div></div></div>
+    <div class="step"><div class="step-left"><div class="step-circle" style="background:#6A8FAB">5</div><div class="step-line"></div></div><div class="step-body"><div class="step-type" style="color:#6A8FAB">Service 2 → Supabase · 零 token</div><div class="step-title">信件写入信箱，用户不知道</div><div class="step-desc">把信件写入 letters 表，is_read=false。用户下次打开 App，信箱悄悄有一封新信。</div></div></div>
+    <div class="step"><div class="step-left"><div class="step-circle" style="background:#8B7BAB">6</div></div><div class="step-body"><div class="step-type" style="color:#8B7BAB">前端 → Supabase · 直连</div><div class="step-title">用户打开信箱，查看来信</div><div class="step-desc">前端直连 Supabase 读取 letters 表，展示信件列表。点开某封信后标记 is_read=true，信封打开动效呈现。</div></div></div>
+  </div>
+
+  <!-- 七种来信表 -->
+  <div class="block-title">七种来信 · 实现顺序</div>
+  <table class="tbl">
+    <thead><tr><th>顺序</th><th>类型</th><th>触发逻辑</th><th>核心感受</th></tr></thead>
+    <tbody>
+      <tr><td style="color:#7A9E7E;font-weight:700">阶段一</td><td>近期回顾</td><td>手记积累到一定量</td><td>「最近这段时间，你经历了这些」</td></tr>
+      <tr><td style="color:#6A8FAB;font-weight:700">阶段二</td><td>随机回望</td><td>随机抽一条旧手记</td><td>「我今天突然想起你说过这句话」</td></tr>
+      <tr><td style="color:#6A8FAB;font-weight:700">阶段二</td><td>深挖同一件事</td><td>多条手记反复提同一件事</td><td>「你知道你一直在想这件事吗」</td></tr>
+      <tr><td style="color:#6A8FAB;font-weight:700">阶段二</td><td>模式发现</td><td>多条手记背后指向同一特质</td><td>「我看见了一条隐藏的线」</td></tr>
+      <tr><td>5</td><td>悄悄变了</td><td>叙事方式出现可见正向转变</td><td>「你说话的方式和以前不一样了」</td></tr>
+      <tr><td>6</td><td>久别来信</td><td>用户很久没登录</td><td>「你不在，但我一直记得你」</td></tr>
+      <tr><td style="color:#C47A6A;font-weight:700">7 · 最后做</td><td>年终回顾</td><td>每年一次</td><td>「看看时间在你身上留下了什么」</td></tr>
+    </tbody>
+  </table>
+  <div class="tip tip-red">⚠️ 阶段一先实现「近期回顾」，跑通 Agent 基础链路。阶段二完成前四种来信。「悄悄变了」和「久别来信」触发门槛高，放后期。「年终回顾」最后做，需要足够长的用户数据积累才有意义。</div>
+</div>
+
+<!-- ===================== 团队分工 ===================== -->
+<div id="section-team" class="section">
+  <div class="page-title">团队分工</div>
+  <div class="page-sub">按阶段分工 · 工作量以★评级 · 角色随阶段推进动态调整</div>
+
+  <!-- 阶段一 -->
+  <div class="phase-block">
+    <div class="phase-header">
+      <div>
+        <div class="phase-title">阶段一 · Demo · 5月中下旬（现在～5月底）</div>
+        <div style="margin-top:8px;font-size:12px;color:#6B5D4F"><span style="font-weight:700;color:#2C2416">至少完成：</span>MVP核心流程跑通（说说→AI提炼→手记），视觉完整，来信入口存在但不触发，Demo完成后立即开放种子用户</div>
+        <div style="margin-top:4px;font-size:12px;color:#6B5D4F"><span style="font-weight:700;color:#7A9E7E">争取完成：</span>Agent基础链路搭通，「近期回顾」初版可跑；七种来信各有基础prompt版本；6月1日正式面向公众（小红书 + 微信群同步启动，日更节奏）</div>
+      </div>
+    </div>
+    <div class="phase-row" style="grid-template-columns:130px 1fr 80px">
+      <div class="role-cell">产品负责人<span class="role-tag" style="background:#F0E6D3;color:#8B6A3A">产品</span></div>
+      <div class="task-cell">
+        <div class="task-item"><span class="dot" style="background:#C5A572"></span>基础设施搭建（Supabase / Railway / Vercel / GitHub）</div>
+        <div class="task-item"><span class="dot" style="background:#C5A572"></span>接口契约文档（第一周完成，所有人对齐后才开始写代码）</div>
+        <div class="task-item"><span class="dot" style="background:#C5A572"></span>进度对齐，卡点介入</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:14px;color:#C5A572;background:#FDFAF5;border-left:1px solid #E8DDD0">★★★☆☆</div>
+    </div>
+    <div class="phase-row" style="grid-template-columns:130px 1fr 80px">
+      <div class="role-cell">后端工程师<span class="role-tag" style="background:#E5EFF5;color:#4A7A96">后端</span></div>
+      <div class="task-cell">
+        <div class="task-item"><span class="dot" style="background:#6A8FAB"></span>数据库建表、shared/ 代码（db读写 + Claude客户端）</div>
+        <div class="task-item"><span class="dot" style="background:#6A8FAB"></span>/alchemy 接口实现（最核心）、summaryService</div>
+        <div class="task-item"><span class="dot" style="background:#6A8FAB"></span>Agent框架搭建，「近期回顾」初版跑通</div>
+        <div class="task-item"><span class="dot" style="background:#6A8FAB"></span>与前端完成联调</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:14px;color:#C5A572;background:#FDFAF5;border-left:1px solid #E8DDD0">★★★★★</div>
+    </div>
+    <div class="phase-row" style="grid-template-columns:130px 1fr 80px">
+      <div class="role-cell">前端工程师<span class="role-tag" style="background:#EEE9F5;color:#3A2A6A">前端</span></div>
+      <div class="task-cell">
+        <div class="task-item"><span class="dot" style="background:#8B7BAB"></span>视觉风格定义（色板、字体、组件库）</div>
+        <div class="task-item"><span class="dot" style="background:#8B7BAB"></span>全部页面实现（mock数据），含信箱空状态</div>
+        <div class="task-item"><span class="dot" style="background:#8B7BAB"></span>与后端完成联调，替换mock数据</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:14px;color:#C5A572;background:#FDFAF5;border-left:1px solid #E8DDD0">★★★★☆</div>
+    </div>
+    <div class="phase-row" style="grid-template-columns:130px 1fr 80px">
+      <div class="role-cell">Prompt工程师<span class="role-tag" style="background:#F5EAE8;color:#964A3A">prompt</span></div>
+      <div class="task-cell">
+        <div class="task-item"><span class="dot" style="background:#C47A6A"></span>说说提炼prompt打磨至可用版本（最优先）</div>
+        <div class="task-item"><span class="dot" style="background:#C47A6A"></span>来信触发逻辑完整方案（供团队讨论）</div>
+        <div class="task-item"><span class="dot" style="background:#C47A6A"></span>来信触发判断prompt初版（可实际运行）</div>
+        <div class="task-item"><span class="dot" style="background:#C47A6A"></span>近期回顾prompt打磨至可用版本</div>
+        <div class="task-item"><span class="dot" style="background:#C47A6A"></span>其余六种来信各出基础prompt版本</div>
+        <div class="task-item"><span class="dot" style="background:#C47A6A"></span>作为第一个真实用户体验并反馈，可小范围组织测试</div>
+        <div class="task-item"><span class="dot" style="background:#C47A6A"></span>准备联调测试样本</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:14px;color:#C5A572;background:#FDFAF5;border-left:1px solid #E8DDD0">★★★★★</div>
+    </div>
+    <div class="phase-row" style="grid-template-columns:130px 1fr 80px">
+      <div class="role-cell">内容与社群运营<span class="role-tag" style="background:#E8F2E9;color:#3A7A4A">运营</span></div>
+      <div class="task-cell">
+        <div class="task-item"><span class="dot" style="background:#7A9E7E"></span>制定后续运营方案（内容方向、发布节奏、素材需求）</div>
+        <div class="task-item"><span class="dot" style="background:#7A9E7E"></span>向团队收集素材（产品进展、截图、产品理念等），为6月1日公开发布做准备</div>
+        <div class="task-item"><span class="dot" style="background:#7A9E7E"></span>搭建小红书账号和微信群，预热内容准备</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:14px;color:#C5A572;background:#FDFAF5;border-left:1px solid #E8DDD0">★★☆☆☆</div>
+    </div>
+  </div>
+  <div class="phase-block">
+    <div class="phase-header">
+      <div>
+        <div class="phase-title">阶段二 · 种子用户内测 · 6月</div>
+        <div style="margin-top:8px;font-size:12px;color:#6B5D4F"><span style="font-weight:700;color:#2C2416">至少完成：</span>种子用户持续使用说说/手记，收集真实反馈；手动跑至少一种来信流程（人工读取→AI辅助生成→发出）；语音功能上线；微信种子用户群建立运转</div>
+        <div style="margin-top:4px;font-size:12px;color:#6B5D4F"><span style="font-weight:700;color:#7A9E7E">争取完成：</span>Agent自动发信跑通并切换；七种来信prompt打磨至可发版本；来信触发规则初版上线；6月底产品整体成型</div>
+      </div>
+    </div>
+    <div class="phase-row" style="grid-template-columns:130px 1fr 80px">
+      <div class="role-cell">产品负责人<span class="role-tag" style="background:#F0E6D3;color:#8B6A3A">产品</span></div>
+      <div class="task-cell">
+        <div class="task-item"><span class="dot" style="background:#C5A572"></span>产品迭代决策，来信触发逻辑把关</div>
+        <div class="task-item"><span class="dot" style="background:#C5A572"></span>用户访谈，结合数据库数据判断产品表现</div>
+        <div class="task-item"><span class="dot" style="background:#C5A572"></span>导师/潜在投资人沟通（Demo完成后启动）</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:14px;color:#C5A572;background:#FDFAF5;border-left:1px solid #E8DDD0">★★★☆☆</div>
+    </div>
+    <div class="phase-row" style="grid-template-columns:130px 1fr 80px">
+      <div class="role-cell">后端工程师<span class="role-tag" style="background:#E5EFF5;color:#4A7A96">后端</span></div>
+      <div class="task-cell">
+        <div class="task-item"><span class="dot" style="background:#6A8FAB"></span>Agent七种来信逐步完善，能跑通则切换自动发信</div>
+        <div class="task-item"><span class="dot" style="background:#6A8FAB"></span>/upload语音接口实现</div>
+        <div class="task-item"><span class="dot" style="background:#6A8FAB"></span>根据用户反馈修bug，性能优化</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:14px;color:#C5A572;background:#FDFAF5;border-left:1px solid #E8DDD0">★★★★☆</div>
+    </div>
+    <div class="phase-row" style="grid-template-columns:130px 1fr 80px">
+      <div class="role-cell">前端工程师<span class="role-tag" style="background:#EEE9F5;color:#3A2A6A">前端</span></div>
+      <div class="task-cell">
+        <div class="task-item"><span class="dot" style="background:#8B7BAB"></span>录音功能页面实现</div>
+        <div class="task-item"><span class="dot" style="background:#8B7BAB"></span>根据用户反馈修复UI问题</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:14px;color:#C5A572;background:#FDFAF5;border-left:1px solid #E8DDD0">★★☆☆☆</div>
+    </div>
+    <div class="phase-row" style="grid-template-columns:130px 1fr 80px">
+      <div class="role-cell">Prompt工程师<span class="role-tag" style="background:#F5EAE8;color:#964A3A">prompt</span></div>
+      <div class="task-cell">
+        <div class="task-item"><span class="dot" style="background:#C47A6A"></span>七种来信prompt逐一迭代打磨，配合Agent测试</div>
+        <div class="task-item"><span class="dot" style="background:#C47A6A"></span>来信质量把关（与产品负责人共同）</div>
+        <div class="task-item"><span class="dot" style="background:#C47A6A"></span>设计问卷和访谈提纲，主导用户反馈收集</div>
+        <div class="task-item"><span class="dot" style="background:#C47A6A"></span>整理用户洞察，回输prompt迭代方向</div>
+        <div class="task-item"><span class="dot" style="background:#C47A6A"></span>持续作为真实用户体验，提供第一手反馈</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:14px;color:#C5A572;background:#FDFAF5;border-left:1px solid #E8DDD0">★★★★★</div>
+    </div>
+    <div class="phase-row" style="grid-template-columns:130px 1fr 80px">
+      <div class="role-cell">内容与社群运营<span class="role-tag" style="background:#E8F2E9;color:#3A7A4A">运营</span></div>
+      <div class="task-cell">
+        <div class="task-item"><span class="dot" style="background:#7A9E7E"></span>小红书持续发布：产品进展（build in public）/ 产品理念 / 情绪叙事宣传 / 用户故事</div>
+        <div class="task-item"><span class="dot" style="background:#7A9E7E"></span>引流到微信群，招募种子用户内测</div>
+        <div class="task-item"><span class="dot" style="background:#7A9E7E"></span>微信群日常维护，维系用户关系，保持活跃</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:14px;color:#C5A572;background:#FDFAF5;border-left:1px solid #E8DDD0">★★★★☆</div>
+    </div>
+  </div>
+
+  <!-- 阶段三上 -->
+  <div class="phase-block">
+    <div class="phase-header">
+      <div>
+        <div class="phase-title">阶段三上 · 功能收尾 · 7月</div>
+        <div style="margin-top:8px;font-size:12px;color:#6B5D4F"><span style="font-weight:700;color:#2C2416">至少完成：</span>来信Agent稳定自动运行；前四种来信体验成熟；根据真实用户数据调整触发规则和prompt</div>
+        <div style="margin-top:4px;font-size:12px;color:#6B5D4F"><span style="font-weight:700;color:#7A9E7E">争取完成：</span>七种来信全部上线可用；悄悄变了/久别来信有初版触发标准；语音体验打磨完成</div>
+      </div>
+    </div>
+    <div class="phase-row" style="grid-template-columns:130px 1fr 80px">
+      <div class="role-cell">产品负责人<span class="role-tag" style="background:#F0E6D3;color:#8B6A3A">产品</span></div>
+      <div class="task-cell">
+        <div class="task-item"><span class="dot" style="background:#C5A572"></span>体验把关，功能优先级决策</div>
+        <div class="task-item"><span class="dot" style="background:#C5A572"></span>持续接触导师/潜在投资人</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:14px;color:#C5A572;background:#FDFAF5;border-left:1px solid #E8DDD0">★★★☆☆</div>
+    </div>
+    <div class="phase-row" style="grid-template-columns:130px 1fr 80px">
+      <div class="role-cell">后端工程师<span class="role-tag" style="background:#E5EFF5;color:#4A7A96">后端</span></div>
+      <div class="task-cell">
+        <div class="task-item"><span class="dot" style="background:#6A8FAB"></span>Agent稳定性优化，剩余来信类型实现</div>
+        <div class="task-item"><span class="dot" style="background:#6A8FAB"></span>性能调优，数据安全合规准备</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:14px;color:#C5A572;background:#FDFAF5;border-left:1px solid #E8DDD0">★★★★☆</div>
+    </div>
+    <div class="phase-row" style="grid-template-columns:130px 1fr 80px">
+      <div class="role-cell">前端工程师<span class="role-tag" style="background:#EEE9F5;color:#3A2A6A">前端</span></div>
+      <div class="task-cell">
+        <div class="task-item"><span class="dot" style="background:#8B7BAB"></span>bug修复、UI小调整、App版本技术预研</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:14px;color:#C5A572;background:#FDFAF5;border-left:1px solid #E8DDD0">★☆☆☆☆</div>
+    </div>
+    <div class="phase-row" style="grid-template-columns:130px 1fr 80px">
+      <div class="role-cell">Prompt工程师<span class="role-tag" style="background:#F5EAE8;color:#964A3A">prompt</span></div>
+      <div class="task-cell">
+        <div class="task-item"><span class="dot" style="background:#C47A6A"></span>悄悄变了/久别来信prompt打磨</div>
+        <div class="task-item"><span class="dot" style="background:#C47A6A"></span>根据真实用户数据迭代已有prompt</div>
+        <div class="task-item"><span class="dot" style="background:#C47A6A"></span>持续主导用户访谈，整理洞察回输迭代</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:14px;color:#C5A572;background:#FDFAF5;border-left:1px solid #E8DDD0">★★★★☆</div>
+    </div>
+    <div class="phase-row" style="grid-template-columns:130px 1fr 80px">
+      <div class="role-cell">内容与社群运营<span class="role-tag" style="background:#E8F2E9;color:#3A7A4A">运营</span></div>
+      <div class="task-cell">
+        <div class="task-item"><span class="dot" style="background:#7A9E7E"></span>小红书/公众号持续运营：产品理念 / 情绪叙事 / 用户故事，扩大用户规模</div>
+        <div class="task-item"><span class="dot" style="background:#7A9E7E"></span>微信群维护，保持用户活跃和关系温度</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:14px;color:#C5A572;background:#FDFAF5;border-left:1px solid #E8DDD0">★★★☆☆</div>
+    </div>
+  </div>
+
+  <!-- 阶段三下 -->
+  <div class="phase-block">
+    <div class="phase-header">
+      <div>
+        <div class="phase-title">阶段三下 · 打磨迭代 · 8月</div>
+        <div style="margin-top:8px;font-size:12px;color:#6B5D4F"><span style="font-weight:700;color:#2C2416">至少完成：</span>所有设计功能完善可用；产品进入稳定迭代状态；有持续留存的种子用户群体</div>
+        <div style="margin-top:4px;font-size:12px;color:#6B5D4F"><span style="font-weight:700;color:#7A9E7E">争取完成：</span>开始准备正式上线；初步验证核心用户价值主张；年终回顾功能设计完成（等年底上线）</div>
+      </div>
+    </div>
+    <div class="phase-row" style="grid-template-columns:130px 1fr 80px">
+      <div class="role-cell">产品负责人<span class="role-tag" style="background:#F0E6D3;color:#8B6A3A">产品</span></div>
+      <div class="task-cell">
+        <div class="task-item"><span class="dot" style="background:#C5A572"></span>正式上线准备，商业化方向探索</div>
+        <div class="task-item"><span class="dot" style="background:#C5A572"></span>融资/导师沟通深化</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:14px;color:#C5A572;background:#FDFAF5;border-left:1px solid #E8DDD0">★★★☆☆</div>
+    </div>
+    <div class="phase-row" style="grid-template-columns:130px 1fr 80px">
+      <div class="role-cell">后端工程师<span class="role-tag" style="background:#E5EFF5;color:#4A7A96">后端</span></div>
+      <div class="task-cell">
+        <div class="task-item"><span class="dot" style="background:#6A8FAB"></span>系统扩容，数据安全合规</div>
+        <div class="task-item"><span class="dot" style="background:#6A8FAB"></span>正式上线技术准备</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:14px;color:#C5A572;background:#FDFAF5;border-left:1px solid #E8DDD0">★★★☆☆</div>
+    </div>
+    <div class="phase-row" style="grid-template-columns:130px 1fr 80px">
+      <div class="role-cell">前端工程师<span class="role-tag" style="background:#EEE9F5;color:#3A2A6A">前端</span></div>
+      <div class="task-cell">
+        <div class="task-item"><span class="dot" style="background:#8B7BAB"></span>bug修复、UI小调整、App版本技术预研</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:14px;color:#C5A572;background:#FDFAF5;border-left:1px solid #E8DDD0">★☆☆☆☆</div>
+    </div>
+    <div class="phase-row" style="grid-template-columns:130px 1fr 80px">
+      <div class="role-cell">Prompt工程师<span class="role-tag" style="background:#F5EAE8;color:#964A3A">prompt</span></div>
+      <div class="task-cell">
+        <div class="task-item"><span class="dot" style="background:#C47A6A"></span>全链路prompt精调，悄悄变了触发标准持续验证</div>
+        <div class="task-item"><span class="dot" style="background:#C47A6A"></span>年终回顾prompt设计（等年底上线）</div>
+        <div class="task-item"><span class="dot" style="background:#C47A6A"></span>收集正式上线前用户故事，回输内容和产品</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:14px;color:#C5A572;background:#FDFAF5;border-left:1px solid #E8DDD0">★★★☆☆</div>
+    </div>
+    <div class="phase-row" style="grid-template-columns:130px 1fr 80px">
+      <div class="role-cell">内容与社群运营<span class="role-tag" style="background:#E8F2E9;color:#3A7A4A">运营</span></div>
+      <div class="task-cell">
+        <div class="task-item"><span class="dot" style="background:#7A9E7E"></span>扩大用户规模，内容矩阵建立</div>
+        <div class="task-item"><span class="dot" style="background:#7A9E7E"></span>正式上线前预热内容准备</div>
+        <div class="task-item"><span class="dot" style="background:#7A9E7E"></span>用户分层运营，维系核心种子用户关系</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:14px;color:#C5A572;background:#FDFAF5;border-left:1px solid #E8DDD0">★★★★☆</div>
+    </div>
+  </div>
+</div>
+
+
+</div><!-- container -->
+
+<script>
+var currentPrimary = 'overview';
+var currentSub = 'frontend';
+
+function switchPrimary(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.subnav').forEach(s => s.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  btn.classList.add('active');
+  currentPrimary = id;
+  if (id === 'modules') {
+    document.getElementById('subnav-modules').classList.add('active');
+    showSub(currentSub);
+  }
+  window.scrollTo(0, 0);
+}
+
+function switchSub(id, btn) {
+  currentSub = id;
+  document.querySelectorAll('.subnav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  showSub(id);
+  window.scrollTo(0, 0);
+}
+
+function showSub(id) {
+  document.querySelectorAll('.subsection').forEach(s => s.style.display = 'none');
+  var el = document.getElementById('sub-' + id);
+  if (el) el.style.display = 'block';
+}
+
+function toggleFolder(btn) {
+  var files = btn.nextElementSibling;
+  var isOpen = files.classList.contains('open');
+  files.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+}
+</script>
+</body>
+</html>

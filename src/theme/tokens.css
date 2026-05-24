@@ -1,0 +1,38 @@
+:root {
+  --paper: #f7f2e8;
+  --paper-soft: #fffaf1;
+  --ink: #3b2f25;
+  --ink-muted: #7c6b5d;
+  --rose: #d9a3a1;
+  --rose-dark: #b97578;
+  --sage: #a8b496;
+  --lavender: #b8b1c8;
+  --gold: #e6c37a;
+  --line: #e7dcc7;
+  --shadow: 0 16px 42px rgba(59, 47, 37, 0.12);
+  --radius-card: 8px;
+  --radius-control: 999px;
+  --app-width: 420px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  --font-logo: "Pacifico", cursive;
+  --font-display: "Noto Serif SC", "Songti SC", Georgia, serif;
+  --font-body: "Noto Serif SC", "Songti SC", Georgia, serif;
+  --font-ui: "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+
+  --text-brand: 30px;
+  --text-title-1: 30px;
+  --text-title-2: 22px;
+  --text-body: 16px;
+  --text-note: 14px;
+  --text-caption: 12px;
+  --text-label: 13px;
+
+  --leading-title: 1.28;
+  --leading-body: 1.7;
+  --leading-ui: 1.45;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+}

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alcheme 项目开发文档 v2026.05.20</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Georgia, serif; background: #FDFAF5; color: #2C2416; line-height: 1.6; }
+.header { background: #2C2416; padding: 36px 24px 28px; text-align: center; }
+.header-eyebrow { font-size: 11px; letter-spacing: 5px; color: #C5A572; margin-bottom: 10px; text-transform: uppercase; }
+.header h1 { font-size: 26px; color: #FFF8EE; font-weight: 700; margin-bottom: 6px; }
+.header p { color: #A89080; font-size: 12px; }
+.nav { background: #3D3020; display: flex; overflow-x: auto; border-bottom: 1px solid #2C2416; }
+.nav a { padding: 14px 18px; font-size: 13px; color: #A89080; text-decoration: none; white-space: nowrap; }
+.nav a:hover { color: #F0E6D3; }
+.container { max-width: 900px; margin: 0 auto; padding: 32px 20px 60px; }
+.section { margin-bottom: 34px; }
+.page-title { font-size: 22px; font-weight: 700; color: #2C2416; margin-bottom: 4px; }
+.page-sub { font-size: 13px; color: #A89080; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #E8DDD0; }
+.block-title { font-size: 16px; font-weight: 700; color: #2C2416; margin: 24px 0 12px; }
+.tip { font-size: 13px; color: #4A3C2E; background: #F5EDE0; border-left: 3px solid #C5A572; padding: 12px 16px; border-radius: 0 8px 8px 0; margin-bottom: 16px; line-height: 1.7; }
+.tip-blue { background: #E5EFF5; border-left-color: #6A8FAB; color: #2A3A4A; }
+.tip-green { background: #E8F2E9; border-left-color: #7A9E7E; color: #2A4A2E; }
+.tip-red { background: #F5EAE8; border-left-color: #C47A6A; color: #4A2E2A; }
+.tip-yellow { background: #FFF4D8; border-left-color: #D9A500; color: #5E4900; }
+.card { background: white; border: 1px solid #E8DDD0; border-radius: 10px; padding: 18px 20px; margin-bottom: 14px; }
+.card-title { font-size: 14px; font-weight: 700; color: #2C2416; margin-bottom: 8px; }
+.tbl { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px; }
+.tbl thead tr { background: #2C2416; color: white; }
+.tbl th { padding: 10px 14px; text-align: left; font-weight: 600; }
+.tbl td { padding: 10px 14px; border-bottom: 1px solid #F0E8E0; vertical-align: top; line-height: 1.6; }
+.tbl tr:nth-child(odd) td { background: white; }
+.tbl tr:nth-child(even) td { background: #FDFAF5; }
+.tbl .td-code { font-family: monospace; font-size: 12px; color: #6A8FAB; }
+.tbl .td-bold { font-weight: 700; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.phase-block { margin-bottom: 18px; border: 1px solid #E8DDD0; border-radius: 12px; overflow: hidden; }
+.phase-header { background: #F5EDE0; padding: 12px 20px; }
+.phase-title { font-weight: 700; font-size: 15px; color: #2C2416; }
+.phase-goal { font-size: 12px; color: #6B5D4F; margin-top: 6px; line-height: 1.7; }
+.phase-body { padding: 14px 18px; background: white; }
+.task-item { font-size: 13px; color: #2C2416; margin-bottom: 8px; line-height: 1.6; }
+.badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; margin-bottom: 8px; }
+.badge-change { background: #FFF0B8; color: #715500; }
+.footer { text-align: center; padding: 28px 0 8px; font-size: 12px; color: #A89080; border-top: 1px solid #E8DDD0; margin-top: 40px; }
+@media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-eyebrow">Alcheme 项目开发文档</div>
+  <h1>技术架构 · 分工 · 执行计划</h1>
+  <p>2026年5月20日 · 团队阅读版</p>
+</div>
+
+<div class="nav">
+  <a href="#changes">本次重点</a>
+  <a href="#overview">整体结构</a>
+  <a href="#frontend">前端说明</a>
+  <a href="#backend">后端说明</a>
+  <a href="#flows">链路全览</a>
+  <a href="#team">团队分工</a>
+</div>
+
+<div class="container">
+
+  <div class="section" id="changes">
+    <div class="page-title">本次重点</div>
+    <div class="page-sub">这一节只回答一件事：现在的口径是什么，团队要如何理解和配合。</div>
+
+    <div class="tip tip-yellow">
+      这版文档仍然是给团队成员看的，不追求把技术细节讲到代码级，而是帮助大家看清楚：
+      现在的技术架构怎么理解；
+      前端、后端、Prompt 在每个环节各自要完成什么；
+      哪些内容给用户看，哪些内容只给团队内部用。
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="badge badge-change">重点 01</div>
+        <div class="card-title">“说说”主链路由后端统一收口</div>
+        <div style="font-size:13px;color:#6B5D4F;line-height:1.7">
+          用户提交“说说”后，后端负责把 AI 提炼、手记保存、内部分析保存一起做完，再把完整结果返回前端。<br><br>
+          这样做的好处是：减少前后不一致，前端也更容易联调。
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="badge badge-change">重点 02</div>
+        <div class="card-title">补充 profiles 资料层</div>
+        <div style="font-size:13px;color:#6B5D4F;line-height:1.7">
+          Supabase 会自动维护登录账户，但产品自己的资料字段，比如是否完成引导、时区、最近活跃时间，仍然建议放在 `profiles` 表里。
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="badge badge-change">重点 03</div>
+        <div class="card-title">“给用户看的内容”和“系统内部内容”分开</div>
+        <div style="font-size:13px;color:#6B5D4F;line-height:1.7">
+          用户看到的是手记、来信和基础资料。<br><br>
+          内部分析、来信触发原因、夜间任务记录这些内容，只给后端和团队排查用，不直接给用户展示。
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="badge badge-change">重点 04</div>
+        <div class="card-title">触发原因保留，但放在内部记录层</div>
+        <div style="font-size:13px;color:#6B5D4F;line-height:1.7">
+          团队需要知道“这封信为什么触发、参考了哪些手记”，这样后续调 Prompt 和调 Agent 会更顺。<br><br>
+          但这些信息不直接放在用户可见的来信主表里，而是放在内部事件记录层。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="overview">
+    <div class="page-title">整体项目结构</div>
+    <div class="page-sub">大方向仍然是前端 + 后端 + Supabase + Prompt 协作。</div>
+
+    <div class="card">
+      <div class="card-title">前端</div>
+      <div style="font-size:13px;color:#6B5D4F;line-height:1.7">
+        React Web App，部署在 Vercel。<br>
+        负责用户看到的一切页面、交互、动效、列表、详情和基础资料页。
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">后端</div>
+      <div style="font-size:13px;color:#6B5D4F;line-height:1.7">
+        部署在 Railway，上面有两个 Service：<br>
+        Service 1：接收前端请求，调用 AI，保存数据。<br>
+        Service 2：每天夜里跑 Agent，判断是否要生成来信。
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">平台层</div>
+      <div style="font-size:13px;color:#6B5D4F;line-height:1.7">
+        Supabase 负责数据库、登录、音频存储。<br>
+        登录账户由 Supabase 自动维护；产品自己的资料层由 `profiles` 负责。
+      </div>
+    </div>
+
+    <div class="block-title">本版推荐理解方式</div>
+    <table class="tbl">
+      <thead><tr><th>层</th><th>主要职责</th></tr></thead>
+      <tbody>
+        <tr><td class="td-bold">前端</td><td>展示、交互、读取用户自己的资料、手记和来信</td></tr>
+        <tr><td class="td-bold">后端</td><td>处理主链路、调用 AI、保存主数据和内部分析</td></tr>
+        <tr><td class="td-bold">Supabase</td><td>Auth、DB、Storage</td></tr>
+        <tr><td class="td-bold">Prompt</td><td>定义提炼、内部分析、触发机制和来信内容</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section" id="frontend">
+    <div class="page-title">前端说明</div>
+    <div class="page-sub">前端工程师继续负责 React + TypeScript + Vercel。用户看到的一切都在这里。</div>
+
+    <div class="tip tip-blue">
+      前端最重要的理解是：前端负责提交、等待、展示、跳转；后端负责把“提炼 + 保存 + 内部分析”一起做完。
+    </div>
+
+    <div class="card">
+      <div class="card-title">前端继续负责什么</div>
+      <div style="font-size:13px;color:#6B5D4F;line-height:1.7">
+        继续负责首页、输入页、炼金页、手记本、手记详情、信箱、信件详情，以及用户资料相关页面。
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">前端不负责什么</div>
+      <div style="font-size:13px;color:#6B5D4F;line-height:1.7">
+        前端不负责手记主记录落库，也不负责展示“来信为什么触发”这类内部调试信息。
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="backend">
+    <div class="page-title">后端说明</div>
+    <div class="page-sub">后端工程师继续负责 Supabase 平台层、Railway 代码层和 Prompt 协作层。</div>
+
+    <div class="tip tip-red">
+      后端最重要的理解是：后端现在不只是给前端一个 AI 结果，而是真正承担主链路总控。
+    </div>
+
+    <div class="card">
+      <div class="card-title">Service 1</div>
+      <div style="font-size:13px;color:#6B5D4F;line-height:1.7">
+        负责在线请求：接收输入、校验身份、调用 DeepSeek、保存 `notes`、保存 `note_summaries`、返回结果。
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Service 2</div>
+      <div style="font-size:13px;color:#6B5D4F;line-height:1.7">
+        负责夜间 Agent：读取内部分析、判断是否触发来信、生成信件、写内部事件记录。
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="flows">
+    <div class="page-title">链路全览</div>
+    <div class="page-sub">把产品里最重要的几条链路重新讲清楚。</div>
+
+    <div class="card">
+      <div class="card-title">链路一：注册 / 登录</div>
+      <div style="font-size:13px;color:#6B5D4F;line-height:1.7">
+        用户注册和登录，仍然由 Supabase Auth 负责；登录后进入产品。
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">链路二：说说 → AI 提炼 → 保存手记 → 查看手记</div>
+      <div style="font-size:13px;color:#6B5D4F;line-height:1.7">
+        1. 用户在前端输入内容并提交<br>
+        2. 前端把内容交给后端<br>
+        3. 后端调用 DeepSeek 做提炼和内部分析<br>
+        4. 后端保存手记和内部分析<br>
+        5. 后端把结果返回前端<br>
+        6. 前端展示提炼结果并进入手记详情页
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">链路三：语音输入</div>
+      <div style="font-size:13px;color:#6B5D4F;line-height:1.7">
+        前端录音后，把音频交给后端。后端负责转写、提炼、保存，前端负责展示。
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">链路四：Agent 自动生成来信</div>
+      <div style="font-size:13px;color:#6B5D4F;line-height:1.7">
+        Agent 夜间读取内部分析，判断是否触发来信，生成后写入信箱。<br><br>
+        用户看到的是信件正文；团队内部会另外保留触发原因和参考依据，方便后续排查和优化。
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="team">
+    <div class="page-title">团队分工</div>
+    <div class="page-sub">按角色看清楚每个人现在该完成什么。</div>
+
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-title">产品 + 后端</div>
+        <div class="phase-goal">
+          负责数据库、接口、后端主链路、Agent 框架，以及交付“表结构与接口契约”。
+        </div>
+      </div>
+      <div class="phase-body">
+        <div class="task-item">1. 敲定表结构：哪些表、每张表存什么、谁能看、谁能写。</div>
+        <div class="task-item">2. 敲定接口契约：前端提交什么、后端返回什么、字段怎么命名。</div>
+        <div class="task-item">3. 保证主链路由后端统一收口。</div>
+        <div class="task-item">4. 给 Agent 保留内部调试记录。</div>
+      </div>
+    </div>
+
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-title">前端工程师</div>
+        <div class="phase-goal">
+          负责所有页面、动效、展示和接口联调。
+        </div>
+      </div>
+      <div class="phase-body">
+        <div class="task-item">1. 按新的接口契约接后端。</div>
+        <div class="task-item">2. 继续推进页面、交互和动效。</div>
+        <div class="task-item">3. 读取用户自己的资料、手记和来信。</div>
+      </div>
+    </div>
+
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-title">Prompt 工程师</div>
+        <div class="phase-goal">
+          负责“说说”提炼、内部分析、触发机制和来信内容。
+        </div>
+      </div>
+      <div class="phase-body">
+        <div class="task-item">1. 打磨“说说”提炼 Prompt。</div>
+        <div class="task-item">2. 定义 `analysis` 的内部结构。</div>
+        <div class="task-item">3. 负责来信触发和来信内容的 Prompt 质量。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Alcheme 项目开发文档 v2026.05.20 · 团队阅读版
+  </div>
+
+</div>
+</body>
+</html>

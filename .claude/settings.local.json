@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "Bash(npm run *)",
+      "mcp__Claude_Preview__preview_start",
+      "mcp__plugin_figma_figma__whoami",
+      "Skill(figma-generate-design)",
+      "Skill(figma-generate-design:*)",
+      "Skill(figma-use)",
+      "Skill(figma-use:*)",
+      "mcp__plugin_figma_figma__get_metadata",
+      "mcp__plugin_figma_figma__generate_figma_design",
+      "Bash(netstat -ano)",
+      "Bash(findstr :5174)",
+      "Bash(start \"http://localhost:5174/#figmacapture=e0085b77-2d39-412c-afe1-ca9788ee5732&figmaendpoint=https%3A%2F%2Fmcp.figma.com%2Fmcp%2Fcapture%2Fe0085b77-2d39-412c-afe1-ca9788ee5732%2Fsubmit&figmadelay=1000\")",
+      "mcp__plugin_figma_figma__get_screenshot",
+      "mcp__plugin_figma_figma__use_figma",
+      "Bash(cp \"C:\\\\Users\\\\yefan\\\\.claude\\\\projects\\\\D--2026-Alcheme-frontend\\\\a1025c58-af99-46a7-9e6c-e2caf2e4fa08\\\\tool-results\\\\webfetch-1779539211597-inn95h.bin\" /tmp/design.html.gz)",
+      "Bash(gunzip -f /tmp/design.html.gz)",
+      "Read(//tmp/**)"
+    ]
+  }
+}
