@@ -5,7 +5,7 @@ import { EmptyState } from "../components/States";
 type MailboxScreenProps = { onOpenLetter: () => void };
 type Phase    = "loading" | "ready" | "error";
 type FlapColor = "rose" | "sage" | "lavender";
-type OpenPhase = "entering" | "opening";
+type OpenPhase = "entering" | "opening" | "exiting";
 
 // ── Wax seal ──────────────────────────────────────────────────────────────────
 
@@ -46,19 +46,37 @@ const flapPalette: Record<FlapColor, { bg: string }> = {
 
 function PigeonIcon() {
   return (
-    <svg width="30" height="23" viewBox="0 0 30 23" fill="none" aria-hidden="true">
-      {/* wings */}
-      <path d="M13 10 C10 6 5 5 1 6"  stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
-      <path d="M13 10 C16 6 21 5 25 6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
-      {/* body */}
-      <ellipse cx="12" cy="13.5" rx="4.2" ry="2.6" fill="currentColor" opacity="0.82"/>
-      {/* head */}
-      <circle cx="17.5" cy="10.5" r="3"   fill="currentColor" opacity="0.82"/>
-      {/* beak */}
-      <path d="M20 10.5 L23 11.2 L20 12" fill="currentColor" opacity="0.68"/>
-      {/* tail feathers */}
-      <path d="M8  14.5 L4.5 19"   stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" opacity="0.58"/>
-      <path d="M9  14.5 L6.5 19.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" opacity="0.42"/>
+    // Wings rotate around the shoulder at SVG coordinate (18, 15)
+    <svg width="46" height="38" viewBox="0 0 46 38" fill="none" aria-hidden="true">
+      {/* Left wing — animated via .pigeon-wing-l */}
+      <g className="pigeon-wing-l">
+        <path d="M18 15 C13 8 6 5 0 6"
+          stroke="white" strokeWidth="3.2" strokeLinecap="round" fill="none"/>
+        <path d="M18 15 C13 12 6 10 1 11"
+          stroke="white" strokeWidth="1.9" strokeLinecap="round" fill="none" opacity="0.58"/>
+      </g>
+      {/* Right wing — animated via .pigeon-wing-r */}
+      <g className="pigeon-wing-r">
+        <path d="M18 15 C23 8 30 5 36 6"
+          stroke="white" strokeWidth="3.2" strokeLinecap="round" fill="none"/>
+        <path d="M18 15 C23 12 30 10 34 11"
+          stroke="white" strokeWidth="1.9" strokeLinecap="round" fill="none" opacity="0.58"/>
+      </g>
+      {/* Body */}
+      <ellipse cx="15" cy="23" rx="9.5" ry="5.8" fill="white"/>
+      {/* Neck (connects body to head) */}
+      <ellipse cx="23" cy="19" rx="5"   ry="4.2" fill="white"/>
+      {/* Head */}
+      <circle  cx="29" cy="14" r="5.8"  fill="white"/>
+      {/* Beak */}
+      <path d="M34 12.5 L42 14.2 L34 16.2" fill="rgba(230,172,95,0.95)"/>
+      {/* Eye */}
+      <circle cx="30.5" cy="12.2" r="1.5" fill="rgba(75,65,105,0.88)"/>
+      <circle cx="31"   cy="11.7" r="0.55" fill="white" opacity="0.85"/>
+      {/* Tail feathers */}
+      <path d="M7 26 L2  34" stroke="white" strokeWidth="2.6" strokeLinecap="round" opacity="0.88"/>
+      <path d="M10 27 L6  35" stroke="white" strokeWidth="2"   strokeLinecap="round" opacity="0.66"/>
+      <path d="M13 27.5 L10 35" stroke="white" strokeWidth="1.4" strokeLinecap="round" opacity="0.44"/>
     </svg>
   );
 }
@@ -147,11 +165,12 @@ export function MailboxScreen({ onOpenLetter }: MailboxScreenProps) {
   const handleLetterClick = (letter: MockLetter) => {
     setOpeningLetter(letter);
     setOpenPhase("entering");
-    // Start flap rotation after card-appear animation
-    const t1 = setTimeout(() => setOpenPhase("opening"), 300);
-    // Navigate after flap is fully folded
-    const t2 = setTimeout(onOpenLetter, 900);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    // 300 ms: card is settled → start flap fold
+    setTimeout(() => setOpenPhase("opening"), 300);
+    // 800 ms: flap mostly open → begin card exit (scale-up + fade)
+    setTimeout(() => setOpenPhase("exiting"), 800);
+    // 1000 ms: overlay is faded → navigate
+    setTimeout(onOpenLetter, 1000);
   };
 
   return (
@@ -220,22 +239,40 @@ export function MailboxScreen({ onOpenLetter }: MailboxScreenProps) {
 
       {/* ── Opening animation overlay ── */}
       {openingLetter && (
-        <div className="env-open-overlay" aria-hidden="true">
-          <div className="env-open-card">
+        <div
+          className={`env-open-overlay${openPhase === "exiting" ? " env-open-overlay--out" : ""}`}
+          aria-hidden="true"
+        >
+          <div className={`env-open-card${openPhase === "exiting" ? " env-open-card--out" : ""}`}>
             <div className="env-open-inner">
-              {/* Flap: rectangular (no clip-path), rotates open on Y axis */}
+
+              {/* Flap — same clip-path & padding as list card, folds back via rotateY */}
               <div
-                className={`env-open-flap${openPhase === "opening" ? " env-open-flap--open" : ""}`}
+                className={`env-open-flap${
+                  openPhase === "opening" || openPhase === "exiting" ? " env-open-flap--open" : ""
+                }`}
                 style={{ background: flapPalette[openingLetter.flapColor].bg }}
               >
                 <WaxSeal flapColor={openingLetter.flapColor} size={44} />
               </div>
-              {/* Content */}
-              <div className="env-open-content">
+
+              {/* Letter paper revealed behind flap as it opens */}
+              <div
+                className={`env-open-paper${
+                  openPhase === "opening" || openPhase === "exiting" ? " env-open-paper--visible" : ""
+                }`}
+              />
+
+              {/* Right content — same classes as list card */}
+              <div className="env-card__content">
                 <span className="env-card__time">{toLiteraryTime(openingLetter.created_at)}</span>
                 <p className="env-open-title">「{openingLetter.title}」</p>
-                <span className="env-card__tag">{openingLetter.tag}</span>
+                <div className="env-card__footer">
+                  <span className="env-card__tag">{openingLetter.tag}</span>
+                  {openingLetter.isRead && <span className="env-card__read-label">已读</span>}
+                </div>
               </div>
+
             </div>
           </div>
         </div>

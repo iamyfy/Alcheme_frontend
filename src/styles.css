@@ -1134,16 +1134,17 @@ button:disabled {
   margin-bottom: 5px;
 }
 
-/* Pigeon: absolute top-right, unread signal — bobs to invite a tap */
+/* Pigeon: absolute top-right, unread signal — hovers to invite a tap */
 .env-card__pigeon {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  color: var(--ink-muted);
-  opacity: 0.75;
+  top: 6px;
+  right: 8px;
   line-height: 0;
-  transform-origin: center bottom;
-  animation: pigeon-bob 2.4s ease-in-out infinite;
+  /* White bird pops against the card background */
+  filter: drop-shadow(0 3px 9px rgba(80, 65, 120, 0.52))
+          drop-shadow(0 1px 3px rgba(40, 30, 60, 0.28));
+  animation: pigeon-hover 1.5s ease-in-out infinite;
+  transform-origin: center;
 }
 
 /* Title in 「」brackets */
@@ -1187,25 +1188,65 @@ button:disabled {
   opacity: 0.42;
 }
 
-/* ── Pigeon animation ───────────────────────────────────────────── */
-@keyframes pigeon-bob {
-  0%, 100% { transform: translateY(0) rotate(-3deg); }
-  30%       { transform: translateY(-5px) rotate(2deg); }
-  60%       { transform: translateY(-2px) rotate(-1deg); }
+/* ── Pigeon animations ──────────────────────────────────────────── */
+
+/* Gentle body hover — the bird floats up/down while wings flap */
+@keyframes pigeon-hover {
+  0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+  48%       { transform: translateY(-6px) rotate(1.5deg); }
+}
+
+/* Left wing: rotates counterclockwise (up) then clockwise (down) */
+@keyframes wing-flap-l {
+  0%, 100% { transform: rotate(0deg);  }
+  28%       { transform: rotate(-28deg); }   /* full upstroke */
+  58%       { transform: rotate(22deg);  }   /* downstroke */
+}
+
+/* Right wing: mirror of left */
+@keyframes wing-flap-r {
+  0%, 100% { transform: rotate(0deg);  }
+  28%       { transform: rotate(28deg);  }
+  58%       { transform: rotate(-22deg); }
+}
+
+/* Transform-origin in SVG viewport coordinates (shoulder at 18,15 in viewBox "0 0 46 38") */
+.pigeon-wing-l {
+  transform-origin: 18px 15px;
+  animation: wing-flap-l 0.64s ease-in-out infinite;
+}
+.pigeon-wing-r {
+  transform-origin: 18px 15px;
+  animation: wing-flap-r 0.64s ease-in-out infinite;
 }
 
 /* ── Envelope opening overlay ───────────────────────────────────── */
+
+/* Scrim fade-in */
 @keyframes env-overlay-fadein {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
 
-@keyframes env-card-pop {
-  from { opacity: 0; transform: scale(0.88) translateY(12px); }
-  to   { opacity: 1; transform: scale(1) translateY(0); }
+/* Scrim fade-out (exit) */
+@keyframes env-overlay-fadeout {
+  from { opacity: 1; }
+  to   { opacity: 0; }
 }
 
-/* Full-screen scrim */
+/* Card pops in from slightly below */
+@keyframes env-card-pop {
+  from { opacity: 0; scale: 0.86; translate: 0 16px; }
+  to   { opacity: 1; scale: 1;    translate: 0 0;    }
+}
+
+/* Card exits: zooms up into screen, fading out */
+@keyframes env-card-exit {
+  from { opacity: 1; scale: 1;    translate: 0 0;    }
+  to   { opacity: 0; scale: 1.07; translate: 0 -8px; }
+}
+
+/* ── Full-screen scrim ── */
 .env-open-overlay {
   position: fixed;
   inset: 0;
@@ -1213,69 +1254,106 @@ button:disabled {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(48, 38, 28, 0.52);
-  animation: env-overlay-fadein 0.22s ease both;
-  /* Clip to app canvas width */
+  background: rgba(48, 38, 28, 0.55);
+  animation: env-overlay-fadein 0.2s ease both;
   pointer-events: none;
 }
-
-/* Centered envelope card */
-.env-open-card {
-  width: min(calc(100vw - 48px), 340px);
-  border-radius: 12px;
-  background: var(--paper-soft);
-  border: 1px solid var(--line);
-  box-shadow:
-    0 12px 40px rgba(48, 38, 28, 0.22),
-    0 4px 12px rgba(48, 38, 28, 0.12);
-  overflow: hidden;
-  animation: env-card-pop 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+.env-open-overlay--out {
+  animation: env-overlay-fadeout 0.22s ease both;
 }
 
-/* Inner row: flap left, content right */
+/* ── Centered card — visually identical to .env-card__inner ── */
+/* Note: NO overflow:hidden so the 3-D flap transform is not clipped */
+.env-open-card {
+  width: min(calc(100vw - 48px), 320px);
+  border-radius: 10px;
+  background-color: #FBF6EC;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+  background-blend-mode: multiply;
+  box-shadow:
+    0 2px 6px rgba(120, 90, 50, 0.09),
+    0 14px 28px -14px rgba(120, 90, 50, 0.20),
+    0 20px 56px rgba(48, 38, 28, 0.26);
+  animation: env-card-pop 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.env-open-card--out {
+  animation: env-card-exit 0.22s cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+/* ── Inner row: flap left + content right ── */
+/* perspective on parent so child rotateY is rendered in 3-D */
 .env-open-inner {
   display: flex;
-  min-height: 120px;
-  perspective: 700px;
+  position: relative;
+  min-height: 96px;  /* matches .env-card__inner */
+  perspective: 560px;
+  perspective-origin: left center;
 }
 
-/* Left flap panel */
+/* ── Left flap — same clip-path & padding as .env-card__flap ── */
 .env-open-flap {
   flex-shrink: 0;
-  width: 88px;
+  width: 82px;              /* matches list card */
   display: flex;
   align-items: center;
   justify-content: center;
-  /* 3-D fold axis is the left edge of the flap */
+  padding: 0 22px 0 8px;   /* matches list card */
+  border-radius: 10px 0 0 10px;   /* compensates for no overflow:hidden on parent */
+  /* Diagonal clip — SAME as .env-card__flap */
+  clip-path: polygon(0 0, 100% 0, 62% 100%, 0 100%);
+  /* 3-D fold: left edge is the hinge */
   transform-origin: left center;
-  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
-  transform: perspective(700px) rotateY(0deg);
+  transform: rotateY(0deg);
+  transition:
+    transform 0.52s cubic-bezier(0.4, 0, 0.2, 1),
+    clip-path 0.18s ease;
+  backface-visibility: hidden;
 }
-
 .env-open-flap--open {
-  transform: perspective(700px) rotateY(-90deg);
+  /* Past 90° so it "tucks behind" and the inner paper is exposed */
+  transform: rotateY(-105deg);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);  /* release diagonal as it folds */
 }
 
-/* Right content */
-.env-open-content {
-  flex: 1;
-  padding: 18px 16px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  justify-content: center;
+/* ── Inner letter paper — revealed as flap folds back ── */
+.env-open-paper {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 82px;
+  border-radius: 10px 0 0 10px;
+  background: linear-gradient(135deg, rgba(255,253,245,0.9) 0%, rgba(240,234,218,0.7) 100%);
+  /* Horizontal lines, like ruled letter paper */
+  background-image:
+    repeating-linear-gradient(
+      transparent,
+      transparent 17px,
+      rgba(159, 140, 100, 0.12) 17px,
+      rgba(159, 140, 100, 0.12) 18px
+    ),
+    linear-gradient(135deg, rgba(255,253,245,0.9) 0%, rgba(240,234,218,0.7) 100%);
+  opacity: 0;
+  transition: opacity 0.25s ease 0.26s;   /* delayed — wait for flap to rotate ~45° */
+  z-index: -1;   /* sits behind flap */
+}
+.env-open-paper--visible {
+  opacity: 1;
 }
 
+/* ── Overlay title (uses env-card__content, env-card__time, env-card__tag from list) ── */
 .env-open-title {
   margin: 0;
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: 14px;    /* matches .env-card__title */
   color: var(--ink);
-  line-height: 1.58;
+  line-height: 1.62;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  flex: 1;
 }
 
 /* ─── Empty / loading / error states ────────────────────────────── */
@@ -1517,9 +1595,15 @@ button:disabled {
     transform: none;
   }
   .twinkle, .twinkle-2, .twinkle-3, .drift { animation: none; }
-  .env-card__pigeon { animation: none; }
-  .env-open-overlay, .env-open-card { animation: none; }
+  .env-card__pigeon,
+  .pigeon-wing-l,
+  .pigeon-wing-r { animation: none; }
+  .env-open-overlay,
+  .env-open-overlay--out,
+  .env-open-card,
+  .env-open-card--out { animation: none; opacity: 1; }
   .env-open-flap { transition: none; }
+  .env-open-paper { transition: none; }
 }
 
 /* ─── Pulse animation ────────────────────────────────────────────── */
