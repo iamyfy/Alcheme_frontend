@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { CSSProperties } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, MoreHorizontal } from "lucide-react";
 import { PaperCard } from "../components/PaperCard";
 import { SecondaryScreenHeader } from "../components/ScreenHeader";
 import { weatherOptions } from "../components/WeatherStickers";
@@ -69,10 +69,24 @@ function CollapsibleSection({
 export function JournalNoteDetailScreen({ onBack }: JournalNoteDetailScreenProps) {
   const hasSecond = !!mockNote.secondNarration;
   const energyOpt = weatherOptions.find((w) => w.id === mockNote.energy) ?? null;
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
     <section className="screen journal-detail-screen">
-      <SecondaryScreenHeader title="手记详情" onBack={onBack} />
+      <SecondaryScreenHeader
+        title="手记详情"
+        onBack={onBack}
+        action={
+          <button
+            className="icon-button jd-more-btn"
+            type="button"
+            aria-label="更多操作"
+            onClick={() => setDrawerOpen(true)}
+          >
+            <MoreHorizontal aria-hidden size={20} strokeWidth={1.8} />
+          </button>
+        }
+      />
 
       {/* ── 日期 · 能量 meta 行 ──────────────────── */}
       <div className="journal-detail-meta enter enter-1">
@@ -116,8 +130,7 @@ export function JournalNoteDetailScreen({ onBack }: JournalNoteDetailScreenProps
       </div>
 
       {/* ── 提炼内容 ──────────────────────────────── */}
-      <div className="journal-detail-section enter enter-3">
-        <p className="journal-detail-label">提炼内容</p>
+      <CollapsibleSection label="提炼内容" className="enter enter-3">
         <PaperCard variant="reflection" style={{ padding: "2px 18px" }}>
           {mockNote.reflections.map((text) => (
             <div key={text} className="journal-detail-reflection-item">
@@ -126,7 +139,7 @@ export function JournalNoteDetailScreen({ onBack }: JournalNoteDetailScreenProps
             </div>
           ))}
         </PaperCard>
-      </div>
+      </CollapsibleSection>
 
       {/* ── 原来的我怎么说 ─────────────────────────── */}
       <CollapsibleSection label="原来的我怎么说" className="enter enter-4">
@@ -155,6 +168,36 @@ export function JournalNoteDetailScreen({ onBack }: JournalNoteDetailScreenProps
           </PaperCard>
         )}
       </CollapsibleSection>
+      {/* ── 操作下拉菜单 ─────────────────────────── */}
+      {drawerOpen && (
+        <>
+          {/* 透明遮罩，捕获点击外部 */}
+          <div
+            className="jd-popover-scrim"
+            aria-hidden="true"
+            onClick={() => setDrawerOpen(false)}
+          />
+          <div className="jd-popover" role="menu" aria-label="手记操作">
+            <button
+              className="jd-popover__item"
+              type="button"
+              role="menuitem"
+              onClick={() => setDrawerOpen(false)}
+            >
+              编辑手记
+            </button>
+            <div className="jd-popover__divider" aria-hidden="true" />
+            <button
+              className="jd-popover__item jd-popover__item--delete"
+              type="button"
+              role="menuitem"
+              onClick={() => setDrawerOpen(false)}
+            >
+              删除这页
+            </button>
+          </div>
+        </>
+      )}
     </section>
   );
 }
