@@ -1426,7 +1426,7 @@ button:disabled {
 
 .me-name-btn {
   display: flex;
-  align-items: flex-end;
+  align-items: baseline;
   gap: 6px;
   background: none;
   border: none;
