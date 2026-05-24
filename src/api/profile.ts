@@ -30,3 +30,11 @@ export function completeOnboarding(): Promise<UserProfile> {
     body: JSON.stringify({ onboarding_completed: true }),
   });
 }
+
+// Contract §3.1: call on login and on each note submission.
+export function touchLastActiveAt(): Promise<UserProfile> {
+  return apiRequest<UserProfile>("/v1/profile", {
+    method: "PATCH",
+    body: JSON.stringify({ last_active_at: new Date().toISOString() }),
+  });
+}

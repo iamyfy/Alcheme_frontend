@@ -44,6 +44,14 @@ export type NoteDetail = {
   created_at: string;
 };
 
+// Submitted by SecondNarrationScreen after the initial distill.
+// Contract does not yet define a standalone endpoint for this — assume
+// PATCH /v1/notes/:id; confirm with backend before wiring in phase 2.
+export type SecondInputPayload = {
+  second_input_type: "text" | "voice";
+  second_input: string;
+};
+
 // ── API functions (wired in phase 2) ─────────────────────────────────────────
 
 export function distillNote(payload: DistillNotePayload): Promise<DistillNoteResult> {
@@ -59,4 +67,15 @@ export function listNotes(): Promise<NoteListResponse> {
 
 export function getNoteDetail(id: string): Promise<NoteDetail> {
   return apiRequest<NoteDetail>(`/v1/notes/${id}`);
+}
+
+// TODO (phase 2): confirm endpoint with backend (PATCH /v1/notes/:id)
+export function submitSecondInput(
+  noteId: string,
+  payload: SecondInputPayload,
+): Promise<NoteDetail> {
+  return apiRequest<NoteDetail>(`/v1/notes/${noteId}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
 }

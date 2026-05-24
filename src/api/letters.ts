@@ -32,3 +32,9 @@ export function listLetters(): Promise<LetterListResponse> {
 export function markLetterRead(id: string): Promise<MarkReadResult> {
   return apiRequest<MarkReadResult>(`/v1/letters/${id}/read`, { method: "POST" });
 }
+
+// Not explicitly defined in the contract — LetterDetailScreen uses list data
+// passed down as props for phase 1. Add GET /v1/letters/:id if backend defines it.
+export function getLetter(id: string): Promise<LetterListItem> {
+  return apiRequest<LetterListItem>(`/v1/letters/${id}`);
+}
