@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { Pencil } from "lucide-react";
 import { PaperCard } from "../components/PaperCard";
 import { PrimaryScreenHeader } from "../components/ScreenHeader";
 import { BottleSticker, StarSticker } from "../components/Stickers";
@@ -29,8 +30,6 @@ export function MeScreen({ onSignOut, onOnboarding }: MeScreenProps) {
     window.localStorage.setItem(NAME_KEY, trimmed);
     setEditing(false);
   };
-
-  const hasName = name.length > 0;
 
   return (
     <section className="screen">
@@ -64,17 +63,16 @@ export function MeScreen({ onSignOut, onOnboarding }: MeScreenProps) {
             />
           ) : (
             <button
-              className={`me-name-btn${hasName ? "" : " me-name-btn--empty"}`}
+              className="me-name-btn"
               type="button"
               onClick={startEdit}
-              aria-label={hasName ? `称呼：${name}，点击修改` : "点击设置称呼"}
+              aria-label="点击设置或修改称呼"
             >
-              {hasName ? name : "希望 Alcheme 怎么称呼你"}
+              <span className="me-name-text">{name || " "}</span>
+              <Pencil size={13} strokeWidth={1.6} className="me-name-pencil" aria-hidden />
             </button>
           )}
-          {hasName && !editing && (
-            <span className="me-name-hint">点击修改称呼</span>
-          )}
+          <span className="me-name-hint">希望 Alcheme 怎么称呼你</span>
         </div>
       </div>
 
