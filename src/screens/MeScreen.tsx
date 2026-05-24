@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { PaperCard } from "../components/PaperCard";
 import { PrimaryScreenHeader } from "../components/ScreenHeader";
 import { BottleSticker, StarSticker } from "../components/Stickers";
+
+const NAME_KEY = "alcheme_mock_name";
 
 type MeScreenProps = {
   onSignOut: () => void;
@@ -10,6 +12,25 @@ type MeScreenProps = {
 
 export function MeScreen({ onSignOut, onOnboarding }: MeScreenProps) {
   const [demoMode, setDemoMode] = useState(true);
+  const [name, setName] = useState(() => window.localStorage.getItem(NAME_KEY) ?? "");
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const startEdit = () => {
+    setDraft(name);
+    setEditing(true);
+    setTimeout(() => inputRef.current?.focus(), 0);
+  };
+
+  const commitEdit = () => {
+    const trimmed = draft.trim();
+    setName(trimmed);
+    window.localStorage.setItem(NAME_KEY, trimmed);
+    setEditing(false);
+  };
+
+  const hasName = name.length > 0;
 
   return (
     <section className="screen">
@@ -28,9 +49,32 @@ export function MeScreen({ onSignOut, onOnboarding }: MeScreenProps) {
         <div className="me-avatar">
           <BottleSticker style={{ width: 36, height: 56 }} aria-hidden />
         </div>
-        <div>
-          <p className="me-name">Nina</p>
-          <p className="me-email">希望 Alcheme 怎么称呼你</p>
+        <div className="me-name-block">
+          {editing ? (
+            <input
+              ref={inputRef}
+              className="me-name-input"
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              onBlur={commitEdit}
+              onKeyDown={(e) => { if (e.key === "Enter") commitEdit(); if (e.key === "Escape") setEditing(false); }}
+              maxLength={20}
+              placeholder="你的称呼"
+              aria-label="编辑称呼"
+            />
+          ) : (
+            <button
+              className={`me-name-btn${hasName ? "" : " me-name-btn--empty"}`}
+              type="button"
+              onClick={startEdit}
+              aria-label={hasName ? `称呼：${name}，点击修改` : "点击设置称呼"}
+            >
+              {hasName ? name : "希望 Alcheme 怎么称呼你"}
+            </button>
+          )}
+          {hasName && !editing && (
+            <span className="me-name-hint">点击修改称呼</span>
+          )}
         </div>
       </div>
 
