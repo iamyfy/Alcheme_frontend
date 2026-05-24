@@ -1134,14 +1134,16 @@ button:disabled {
   margin-bottom: 5px;
 }
 
-/* Pigeon: absolute top-right, unread signal */
+/* Pigeon: absolute top-right, unread signal — bobs to invite a tap */
 .env-card__pigeon {
   position: absolute;
   top: 12px;
   right: 12px;
   color: var(--ink-muted);
-  opacity: 0.65;
+  opacity: 0.75;
   line-height: 0;
+  transform-origin: center bottom;
+  animation: pigeon-bob 2.4s ease-in-out infinite;
 }
 
 /* Title in 「」brackets */
@@ -1183,6 +1185,97 @@ button:disabled {
   font-size: 11px;
   color: var(--ink-muted);
   opacity: 0.42;
+}
+
+/* ── Pigeon animation ───────────────────────────────────────────── */
+@keyframes pigeon-bob {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  30%       { transform: translateY(-5px) rotate(2deg); }
+  60%       { transform: translateY(-2px) rotate(-1deg); }
+}
+
+/* ── Envelope opening overlay ───────────────────────────────────── */
+@keyframes env-overlay-fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes env-card-pop {
+  from { opacity: 0; transform: scale(0.88) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Full-screen scrim */
+.env-open-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(48, 38, 28, 0.52);
+  animation: env-overlay-fadein 0.22s ease both;
+  /* Clip to app canvas width */
+  pointer-events: none;
+}
+
+/* Centered envelope card */
+.env-open-card {
+  width: min(calc(100vw - 48px), 340px);
+  border-radius: 12px;
+  background: var(--paper-soft);
+  border: 1px solid var(--line);
+  box-shadow:
+    0 12px 40px rgba(48, 38, 28, 0.22),
+    0 4px 12px rgba(48, 38, 28, 0.12);
+  overflow: hidden;
+  animation: env-card-pop 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Inner row: flap left, content right */
+.env-open-inner {
+  display: flex;
+  min-height: 120px;
+  perspective: 700px;
+}
+
+/* Left flap panel */
+.env-open-flap {
+  flex-shrink: 0;
+  width: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 3-D fold axis is the left edge of the flap */
+  transform-origin: left center;
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: perspective(700px) rotateY(0deg);
+}
+
+.env-open-flap--open {
+  transform: perspective(700px) rotateY(-90deg);
+}
+
+/* Right content */
+.env-open-content {
+  flex: 1;
+  padding: 18px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: center;
+}
+
+.env-open-title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--ink);
+  line-height: 1.58;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* ─── Empty / loading / error states ────────────────────────────── */
@@ -1401,6 +1494,7 @@ button:disabled {
 .enter-3 { animation-delay: 0.34s; }
 .enter-4 { animation-delay: 0.52s; }
 .enter-5 { animation-delay: 0.72s; }
+.enter-6 { animation-delay: 0.94s; }
 
 @keyframes twinkle {
   0%, 100% { opacity: 0.4; transform: scale(0.92); }
@@ -1417,12 +1511,15 @@ button:disabled {
 .drift { animation: drift 6s ease-in-out infinite; }
 
 @media (prefers-reduced-motion: reduce) {
-  .enter, .enter-1, .enter-2, .enter-3, .enter-4, .enter-5 {
+  .enter, .enter-1, .enter-2, .enter-3, .enter-4, .enter-5, .enter-6 {
     animation: none;
     opacity: 1;
     transform: none;
   }
   .twinkle, .twinkle-2, .twinkle-3, .drift { animation: none; }
+  .env-card__pigeon { animation: none; }
+  .env-open-overlay, .env-open-card { animation: none; }
+  .env-open-flap { transition: none; }
 }
 
 /* ─── Pulse animation ────────────────────────────────────────────── */
