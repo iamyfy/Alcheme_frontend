@@ -1,5 +1,5 @@
-import { BrandLogo } from "../components/BrandLogo";
 import { PaperCard } from "../components/PaperCard";
+import { PrimaryScreenHeader } from "../components/ScreenHeader";
 import { useHomeCopy } from "../hooks/useHomeCopy";
 import {
   MoonSticker as MoonDeco,
@@ -54,17 +54,7 @@ export function HomeScreen({ onStart, onOnboarding: _onOnboarding }: HomeScreenP
         aria-hidden
       />
 
-      {/* Logo — same layout as ScreenHeader top bar */}
-      <header className="screen-header" style={{ marginBottom: 0 }}>
-        <div className="screen-header__top">
-          <BrandLogo height={72} />
-        </div>
-      </header>
-
-      {/* Main question */}
-      <section style={{ paddingTop: 16, paddingBottom: 20 }}>
-        <h2 className="page-title" style={{ margin: "0 0 4px", fontSize: "30px" }}>{copy.headline}</h2>
-      </section>
+      <PrimaryScreenHeader kicker="每一个此刻，都值得被看见" title={copy.headline} />
 
       {/* Writing card CTA */}
       <section style={{ marginBottom: 32 }}>

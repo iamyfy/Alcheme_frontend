@@ -71,7 +71,7 @@ export function NotebookScreen({ onOpenNote }: NotebookScreenProps) {
 
   return (
     <section className="screen">
-      <PrimaryScreenHeader title="手记本" kicker="2026 年 5 月" />
+      <PrimaryScreenHeader title="手记本" kicker="每一页都是一次抵达" />
 
       {phase === "loading" && (
         <div className="entry-list">

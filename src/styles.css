@@ -297,7 +297,7 @@ button:disabled {
   font-family: var(--font-ui);
   font-size: var(--text-note);
   line-height: var(--leading-ui);
-  margin: 0 0 18px;
+  margin: 0 0 28px;
 }
 
 .paper-card {

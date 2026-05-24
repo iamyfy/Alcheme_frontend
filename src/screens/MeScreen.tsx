@@ -41,7 +41,7 @@ export function MeScreen({ onSignOut, onOnboarding }: MeScreenProps) {
         aria-hidden
       />
 
-      <PrimaryScreenHeader title="我的" />
+      <PrimaryScreenHeader title="我的" kicker="这里没有旁观者，只有你" />
 
       {/* User profile card */}
       <div className="me-avatar-card">

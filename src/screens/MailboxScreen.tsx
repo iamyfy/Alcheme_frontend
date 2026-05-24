@@ -112,7 +112,7 @@ export function MailboxScreen({ onOpenLetter }: MailboxScreenProps) {
 
   return (
     <section className="screen">
-      <PrimaryScreenHeader title="信箱" kicker="有些话，会在合适的时候回来。" />
+      <PrimaryScreenHeader title="信箱" kicker="有些话，会在合适的时候，找到你" />
 
       {phase === "loading" && (
         <div className="entry-list">
