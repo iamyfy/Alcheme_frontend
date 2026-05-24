@@ -1,7 +1,9 @@
 import { useState } from "react";
 import type { CSSProperties } from "react";
 import { ChevronDown, MoreHorizontal } from "lucide-react";
+import { OriginalVoiceCard } from "../components/OriginalVoiceCard";
 import { PaperCard } from "../components/PaperCard";
+import { ReflectionVoiceCard } from "../components/ReflectionVoiceCard";
 import { SecondaryScreenHeader } from "../components/ScreenHeader";
 import { weatherOptions } from "../components/WeatherStickers";
 
@@ -143,25 +145,17 @@ export function JournalNoteDetailScreen({ onBack }: JournalNoteDetailScreenProps
 
       {/* ── 原来的我怎么说 ─────────────────────────── */}
       <CollapsibleSection label="原来的我怎么说" className="enter enter-4">
-        <PaperCard
-          variant="writing"
-          style={{ padding: "16px 18px", minHeight: 112 }}
-        >
+        <OriginalVoiceCard>
           <p className="journal-detail-narration">{mockNote.narration}</p>
-        </PaperCard>
+        </OriginalVoiceCard>
       </CollapsibleSection>
 
       {/* ── 现在的我怎么说 ─────────────────────────── */}
       <CollapsibleSection label="现在的我怎么说" className="enter enter-5">
         {hasSecond ? (
-          <PaperCard
-            hasTape
-            tapeColor="sage"
-            tapePosition="top-left"
-            style={{ padding: "16px 18px" }}
-          >
+          <ReflectionVoiceCard>
             <p className="journal-detail-narration">{mockNote.secondNarration}</p>
-          </PaperCard>
+          </ReflectionVoiceCard>
         ) : (
           <PaperCard style={{ padding: "16px 18px" }}>
             <p className="journal-detail-empty">尚未记录第二次叙述</p>

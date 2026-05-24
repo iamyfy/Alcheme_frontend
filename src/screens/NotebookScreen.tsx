@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { PrimaryScreenHeader } from "../components/ScreenHeader";
 import { EmptyState } from "../components/States";
+import { LeafSticker, FlowerSticker, StarSticker } from "../components/Stickers";
 
 type NotebookScreenProps = {
   onOpenNote: () => void;
@@ -110,7 +111,16 @@ function groupByMonth(entries: MockEntry[]): MonthGroup[] {
   return groups;
 }
 
-// ── Skeleton ──────────────────────────────────────────────────────────────────
+// ── Card corner stickers ──────────────────────────────────────────────────────
+
+const cardStickers = [
+  <LeafSticker   key="0" style={{ width: 36, height: 36, opacity: 0.72, transform: "rotate(20deg)" }} />,
+  <FlowerSticker key="1" style={{ width: 32, height: 32, opacity: 0.68 }} />,
+  <StarSticker   key="2" variant="pink" style={{ width: 30, height: 30, opacity: 0.70, transform: "rotate(15deg)" }} />,
+  <LeafSticker   key="3" style={{ width: 34, height: 34, opacity: 0.66, transform: "rotate(-15deg) scaleX(-1)" }} />,
+  <FlowerSticker key="4" style={{ width: 30, height: 30, opacity: 0.64, transform: "rotate(30deg)" }} />,
+];
+
 
 const SKELETON_ROTATIONS = [-0.4, 0.3, -0.2];
 
@@ -204,6 +214,7 @@ export function NotebookScreen({ onOpenNote }: NotebookScreenProps) {
                         onClick={onOpenNote}
                         style={{ transform: `rotate(${entry.rotate}deg)` }}
                       >
+                        <div className="entry-card__flourish" aria-hidden="true">{cardStickers[i % cardStickers.length]}</div>
                         <p className="entry-card__date">{formatEntryDate(entry.created_at)}</p>
                         <p className="entry-card__preview">{entry.preview}</p>
                         <div className="entry-card__mood">

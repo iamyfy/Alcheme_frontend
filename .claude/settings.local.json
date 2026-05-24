@@ -28,7 +28,10 @@
       "Bash(git -C \"D:/2026/Alcheme_frontend\" commit -m \"Fix pencil icon alignment: baseline instead of flex-end\")",
       "Bash(git -C \"D:/2026/Alcheme_frontend\" add src/screens/HomeScreen.tsx src/screens/NotebookScreen.tsx src/screens/MailboxScreen.tsx src/screens/MeScreen.tsx src/styles.css)",
       "Bash(git add *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(git commit *)"
     ]
   }
 }

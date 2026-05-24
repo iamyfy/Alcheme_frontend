@@ -42,16 +42,28 @@ const flapPalette: Record<FlapColor, { bg: string }> = {
   lavender: { bg: "rgba(184,177,200,0.28)" },
 };
 
-// ── Pigeon icon ───────────────────────────────────────────────────────────────
+// ── Bird icon ─────────────────────────────────────────────────────────────────
 
-// Minimal seagull silhouette — two arched wings, one stroke
+// Rose-tinted swallow — elegant curved wings only, no tail
 function GullIcon() {
   return (
-    <svg width="30" height="13" viewBox="0 0 30 13" fill="none" aria-hidden="true">
+    <svg width="36" height="20" viewBox="0 0 36 20" fill="none" aria-hidden="true">
+      {/* Left wing — long elegant sweep */}
       <path
-        d="M0 10 C5 2 11 0 15 5 C19 0 25 2 30 10"
-        stroke="white"
-        strokeWidth="2.6"
+        className="bird-wing-left"
+        d="M18 12 C14 8 9 5 3 8 C6 7 10 9 18 12"
+        stroke="#C17878"
+        strokeWidth="2.0"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+      {/* Right wing — mirror */}
+      <path
+        className="bird-wing-right"
+        d="M18 12 C22 8 27 5 33 8 C30 7 26 9 18 12"
+        stroke="#C17878"
+        strokeWidth="2.0"
         strokeLinecap="round"
         strokeLinejoin="round"
         fill="none"
@@ -205,7 +217,7 @@ export function MailboxScreen({ onOpenLetter }: MailboxScreenProps) {
                     )}
                     <p className="env-card__title">「{letter.title}」</p>
                     <div className="env-card__footer">
-                      <span className="env-card__tag">{letter.tag}</span>
+                      <span className={`env-card__tag env-card__tag--${letter.flapColor}`}>{letter.tag}</span>
                       {letter.isRead && <span className="env-card__read-label">已读</span>}
                     </div>
                   </div>
@@ -247,7 +259,7 @@ export function MailboxScreen({ onOpenLetter }: MailboxScreenProps) {
                 <span className="env-card__time">{toLiteraryTime(openingLetter.created_at)}</span>
                 <p className="env-open-title">「{openingLetter.title}」</p>
                 <div className="env-card__footer">
-                  <span className="env-card__tag">{openingLetter.tag}</span>
+                  <span className={`env-card__tag env-card__tag--${openingLetter.flapColor}`}>{openingLetter.tag}</span>
                   {openingLetter.isRead && <span className="env-card__read-label">已读</span>}
                 </div>
               </div>
