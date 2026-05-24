@@ -13,6 +13,7 @@ type JournalNoteDetailScreenProps = {
 // TODO (phase 2): energy not yet persisted by backend — needs schema update
 const mockNote = {
   date: "5 月 23 日 · 周五",
+  time: "10:24",               // HH:MM at write time (from created_at in phase 2)
   energy: "low",               // weather sticker id selected at write time
   preview: "我在没有把握的时候，还是做了选择。",
   reflections: [
@@ -75,21 +76,34 @@ export function JournalNoteDetailScreen({ onBack }: JournalNoteDetailScreenProps
 
       {/* ── 日期 · 能量 meta 行 ──────────────────── */}
       <div className="journal-detail-meta enter enter-1">
-        <span className="journal-detail-meta__date">{mockNote.date}</span>
+
+        {/* 左：日期两行 */}
+        <div className="journal-detail-meta__date">
+          <span className="journal-detail-meta__date-day">{mockNote.date}</span>
+          <span className="journal-detail-meta__date-time">{mockNote.time}</span>
+        </div>
+
+        {/* 右：能量方块 + 文字（同上一版样式） */}
         {energyOpt && (
-          <span
+          <div
             className="journal-detail-meta__energy"
             aria-label={`当时能量：${energyOpt.label}`}
-            style={{
-              "--sticker-bg": energyOpt.bgColor,
-              "--sticker-border": energyOpt.borderColor,
-            } as CSSProperties}
           >
-            <span className="journal-detail-meta__energy-icon" aria-hidden="true">
+            <span
+              className="journal-detail-meta__energy-icon"
+              style={{
+                "--sticker-bg": energyOpt.bgColor,
+                "--sticker-border": energyOpt.borderColor,
+              } as CSSProperties}
+              aria-hidden="true"
+            >
               <energyOpt.Icon />
             </span>
-            <span className="journal-detail-meta__energy-label">{energyOpt.label}</span>
-          </span>
+            <span className="journal-detail-meta__energy-text">
+              <span className="journal-detail-meta__energy-hint">当时的能量</span>
+              <span className="journal-detail-meta__energy-value">{energyOpt.label}</span>
+            </span>
+          </div>
         )}
       </div>
 

@@ -2872,29 +2872,45 @@ a:focus-visible,
   margin-bottom: 22px;
 }
 
+/* Left: two-line date */
 .journal-detail-meta__date {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.journal-detail-meta__date-day {
   font-family: var(--font-ui);
   font-size: var(--text-caption);
   color: var(--ink-muted);
 }
 
+.journal-detail-meta__date-time {
+  font-family: var(--font-ui);
+  font-size: var(--text-note);
+  color: var(--ink);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.02em;
+}
+
+/* Right: icon square + two-line text (same as original energy row) */
 .journal-detail-meta__energy {
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: var(--sticker-bg, rgba(200, 190, 175, 0.2));
-  border: 1px solid var(--sticker-border, rgba(180, 160, 130, 0.35));
-  border-radius: 999px;
-  padding: 3px 10px 3px 4px;
+  gap: 10px;
 }
 
 .journal-detail-meta__energy-icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--sticker-bg, rgba(200, 190, 175, 0.2));
+  border: 1px solid var(--sticker-border, rgba(180, 160, 130, 0.4));
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
-  flex-shrink: 0;
+  padding: 6px;
 }
 
 .journal-detail-meta__energy-icon svg {
@@ -2902,12 +2918,24 @@ a:focus-visible,
   height: 100%;
 }
 
-.journal-detail-meta__energy-label {
+.journal-detail-meta__energy-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.journal-detail-meta__energy-hint {
   font-family: var(--font-ui);
   font-size: var(--text-caption);
   color: var(--ink-muted);
+  opacity: 0.7;
+}
+
+.journal-detail-meta__energy-value {
+  font-family: var(--font-ui);
+  font-size: var(--text-note);
+  color: var(--ink-muted);
   font-weight: var(--weight-medium);
-  line-height: 1;
 }
 
 .journal-detail-screen {
