@@ -940,8 +940,8 @@ button:disabled {
   content: "";
   flex: 1;
   height: 1px;
-  background: var(--line);
-  opacity: 0.7;
+  background: var(--ink-muted);
+  opacity: 0.35;
 }
 
 .nb-month-label__text {
@@ -2863,6 +2863,53 @@ a:focus-visible,
 }
 
 /* ─── Journal Note Detail (手记本 entry detail) ─────────────────────── */
+
+/* Read-only energy sticker row ── */
+.journal-detail-energy {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.journal-detail-energy__icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--sticker-bg, rgba(200, 190, 175, 0.2));
+  border: 1px solid var(--sticker-border, rgba(180, 160, 130, 0.4));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+}
+
+.journal-detail-energy__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.journal-detail-energy__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.journal-detail-energy__hint {
+  font-family: var(--font-ui);
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+  opacity: 0.7;
+}
+
+.journal-detail-energy__value {
+  font-family: var(--font-ui);
+  font-size: var(--text-note);
+  color: var(--ink-muted);
+  font-weight: var(--weight-medium);
+}
+
 .journal-detail-screen {
   display: flex;
   flex-direction: column;

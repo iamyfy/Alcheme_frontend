@@ -135,7 +135,7 @@ function SunnyIcon() {
 
 /* ─── Weather options data ──────────────────────────────────────────── */
 
-const weatherOptions = [
+export const weatherOptions = [
   {
     id: "very-low",
     label: "很低",

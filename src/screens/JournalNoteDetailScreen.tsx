@@ -1,15 +1,19 @@
 import { useState } from "react";
+import type { CSSProperties } from "react";
 import { ChevronDown } from "lucide-react";
 import { PaperCard } from "../components/PaperCard";
 import { SecondaryScreenHeader } from "../components/ScreenHeader";
+import { weatherOptions } from "../components/WeatherStickers";
 
 type JournalNoteDetailScreenProps = {
   onBack: () => void;
 };
 
 /* ── Mock data ──────────────────────────────────────────────────────── */
+// TODO (phase 2): energy not yet persisted by backend — needs schema update
 const mockNote = {
   date: "5 月 23 日 · 周五",
+  energy: "low",               // weather sticker id selected at write time
   preview: "我在没有把握的时候，还是做了选择。",
   reflections: [
     "我在不确定的处境里，还是往前走了一步。",
@@ -63,6 +67,7 @@ function CollapsibleSection({
 /* ── Screen ─────────────────────────────────────────────────────────── */
 export function JournalNoteDetailScreen({ onBack }: JournalNoteDetailScreenProps) {
   const hasSecond = !!mockNote.secondNarration;
+  const energyOpt = weatherOptions.find((w) => w.id === mockNote.energy) ?? null;
 
   return (
     <section className="screen journal-detail-screen">
@@ -72,8 +77,28 @@ export function JournalNoteDetailScreen({ onBack }: JournalNoteDetailScreenProps
         onBack={onBack}
       />
 
+      {/* ── 当时能量 ──────────────────────────────── */}
+      {energyOpt && (
+        <div className="journal-detail-energy enter enter-1" aria-label={`当时能量：${energyOpt.label}`}>
+          <span
+            className="journal-detail-energy__icon"
+            style={{
+              "--sticker-bg": energyOpt.bgColor,
+              "--sticker-border": energyOpt.borderColor,
+            } as CSSProperties}
+            aria-hidden="true"
+          >
+            <energyOpt.Icon />
+          </span>
+          <span className="journal-detail-energy__text">
+            <span className="journal-detail-energy__hint">当时的能量</span>
+            <span className="journal-detail-energy__value">{energyOpt.label}</span>
+          </span>
+        </div>
+      )}
+
       {/* ── 主线标题 ──────────────────────────────── */}
-      <div className="journal-detail-section enter enter-1">
+      <div className="journal-detail-section enter enter-2">
         <p className="journal-detail-label">这一页的主线</p>
         <PaperCard hasTape tapeColor="lavender" tapePosition="top-left" style={{ padding: "16px 18px" }}>
           <p className="journal-detail-headline">{mockNote.preview}</p>
@@ -81,7 +106,7 @@ export function JournalNoteDetailScreen({ onBack }: JournalNoteDetailScreenProps
       </div>
 
       {/* ── 提炼内容 ──────────────────────────────── */}
-      <div className="journal-detail-section enter enter-2">
+      <div className="journal-detail-section enter enter-3">
         <p className="journal-detail-label">提炼内容</p>
         <PaperCard variant="reflection" style={{ padding: "2px 18px" }}>
           {mockNote.reflections.map((text) => (
@@ -94,7 +119,7 @@ export function JournalNoteDetailScreen({ onBack }: JournalNoteDetailScreenProps
       </div>
 
       {/* ── 原来的我怎么说 ─────────────────────────── */}
-      <CollapsibleSection label="原来的我怎么说" className="enter enter-3">
+      <CollapsibleSection label="原来的我怎么说" className="enter enter-4">
         <PaperCard
           variant="writing"
           style={{ padding: "16px 18px", minHeight: 112 }}
@@ -104,7 +129,7 @@ export function JournalNoteDetailScreen({ onBack }: JournalNoteDetailScreenProps
       </CollapsibleSection>
 
       {/* ── 现在的我怎么说 ─────────────────────────── */}
-      <CollapsibleSection label="现在的我怎么说" className="enter enter-4">
+      <CollapsibleSection label="现在的我怎么说" className="enter enter-5">
         {hasSecond ? (
           <PaperCard
             hasTape
