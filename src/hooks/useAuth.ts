@@ -1,4 +1,8 @@
-// 认证接入 Supabase 后再补这里。
+// TODO (phase 2): connect to Supabase auth.
 export function useAuth() {
-  return {};
+  return {
+    userId: null as string | null,
+    isAuthenticated: false,
+    isLoading: false,
+  };
 }
