@@ -1134,17 +1134,14 @@ button:disabled {
   margin-bottom: 5px;
 }
 
-/* Pigeon: absolute top-right, unread signal — hovers to invite a tap */
+/* Seagull: absolute top-right, unread signal — floats to invite a tap */
 .env-card__pigeon {
   position: absolute;
-  top: 6px;
-  right: 8px;
+  top: 10px;
+  right: 10px;
   line-height: 0;
-  /* White bird pops against the card background */
-  filter: drop-shadow(0 3px 9px rgba(80, 65, 120, 0.52))
-          drop-shadow(0 1px 3px rgba(40, 30, 60, 0.28));
-  animation: pigeon-hover 1.5s ease-in-out infinite;
-  transform-origin: center;
+  filter: drop-shadow(0 2px 7px rgba(80, 65, 120, 0.5));
+  animation: gull-float 1.8s ease-in-out infinite;
 }
 
 /* Title in 「」brackets */
@@ -1188,36 +1185,10 @@ button:disabled {
   opacity: 0.42;
 }
 
-/* ── Pigeon animations ──────────────────────────────────────────── */
-
-/* Gentle body hover — the bird floats up/down while wings flap */
-@keyframes pigeon-hover {
-  0%, 100% { transform: translateY(0) rotate(-1.5deg); }
-  48%       { transform: translateY(-6px) rotate(1.5deg); }
-}
-
-/* Left wing: rotates counterclockwise (up) then clockwise (down) */
-@keyframes wing-flap-l {
-  0%, 100% { transform: rotate(0deg);  }
-  28%       { transform: rotate(-28deg); }   /* full upstroke */
-  58%       { transform: rotate(22deg);  }   /* downstroke */
-}
-
-/* Right wing: mirror of left */
-@keyframes wing-flap-r {
-  0%, 100% { transform: rotate(0deg);  }
-  28%       { transform: rotate(28deg);  }
-  58%       { transform: rotate(-22deg); }
-}
-
-/* Transform-origin in SVG viewport coordinates (shoulder at 18,15 in viewBox "0 0 46 38") */
-.pigeon-wing-l {
-  transform-origin: 18px 15px;
-  animation: wing-flap-l 0.64s ease-in-out infinite;
-}
-.pigeon-wing-r {
-  transform-origin: 18px 15px;
-  animation: wing-flap-r 0.64s ease-in-out infinite;
+/* ── Seagull float animation ────────────────────────────────────── */
+@keyframes gull-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-5px); }
 }
 
 /* ── Envelope opening overlay ───────────────────────────────────── */
@@ -1595,9 +1566,7 @@ button:disabled {
     transform: none;
   }
   .twinkle, .twinkle-2, .twinkle-3, .drift { animation: none; }
-  .env-card__pigeon,
-  .pigeon-wing-l,
-  .pigeon-wing-r { animation: none; }
+  .env-card__pigeon { animation: none; }
   .env-open-overlay,
   .env-open-overlay--out,
   .env-open-card,
@@ -2805,59 +2774,20 @@ button:disabled {
   white-space: pre-line;
 }
 
-/* ─── Letter detail: opening animation ──────────────────────────── */
-.letter-open-stage {
-  position: relative;
+/* ─── Letter detail screen: entrance (picks up from mailbox overlay) ── */
+
+/* The whole screen fades up gently — the letter rises from the opened envelope */
+@keyframes letter-detail-arrive {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0);    }
 }
 
-.letter-open-flap {
-  position: absolute;
-  top: -4px;
-  left: 0;
-  right: 0;
-  height: 80px;
-  z-index: 10;
-  transform-origin: center top;
-  pointer-events: none;
-  transition:
-    transform 0.46s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.30s ease 0.14s;
-}
-
-.letter-open-flap--open {
-  transform: perspective(600px) rotateX(-175deg);
-  opacity: 0;
-}
-
-.letter-open-seal {
-  position: absolute;
-  bottom: 2px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.letter-open-content {
-  opacity: 0;
-  transform: translateY(22px);
-  transition:
-    opacity 0.40s ease,
-    transform 0.46s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.letter-open-content--visible {
-  opacity: 1;
-  transform: none;
+.letter-detail-screen {
+  animation: letter-detail-arrive 0.42s cubic-bezier(0.2, 0.7, 0.3, 1) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .letter-open-flap {
-    transform: none !important;
-    transition: opacity 0.15s ease;
-  }
-  .letter-open-content {
-    transform: none !important;
-    transition: opacity 0.15s ease;
-  }
+  .letter-detail-screen { animation: none; }
 }
 
 /* ─── Global focus-visible base ─────────────────────────────────── */

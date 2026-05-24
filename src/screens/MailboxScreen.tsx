@@ -44,39 +44,18 @@ const flapPalette: Record<FlapColor, { bg: string }> = {
 
 // ── Pigeon icon ───────────────────────────────────────────────────────────────
 
-function PigeonIcon() {
+// Minimal seagull silhouette — two arched wings, one stroke
+function GullIcon() {
   return (
-    // Wings rotate around the shoulder at SVG coordinate (18, 15)
-    <svg width="46" height="38" viewBox="0 0 46 38" fill="none" aria-hidden="true">
-      {/* Left wing — animated via .pigeon-wing-l */}
-      <g className="pigeon-wing-l">
-        <path d="M18 15 C13 8 6 5 0 6"
-          stroke="white" strokeWidth="3.2" strokeLinecap="round" fill="none"/>
-        <path d="M18 15 C13 12 6 10 1 11"
-          stroke="white" strokeWidth="1.9" strokeLinecap="round" fill="none" opacity="0.58"/>
-      </g>
-      {/* Right wing — animated via .pigeon-wing-r */}
-      <g className="pigeon-wing-r">
-        <path d="M18 15 C23 8 30 5 36 6"
-          stroke="white" strokeWidth="3.2" strokeLinecap="round" fill="none"/>
-        <path d="M18 15 C23 12 30 10 34 11"
-          stroke="white" strokeWidth="1.9" strokeLinecap="round" fill="none" opacity="0.58"/>
-      </g>
-      {/* Body */}
-      <ellipse cx="15" cy="23" rx="9.5" ry="5.8" fill="white"/>
-      {/* Neck (connects body to head) */}
-      <ellipse cx="23" cy="19" rx="5"   ry="4.2" fill="white"/>
-      {/* Head */}
-      <circle  cx="29" cy="14" r="5.8"  fill="white"/>
-      {/* Beak */}
-      <path d="M34 12.5 L42 14.2 L34 16.2" fill="rgba(230,172,95,0.95)"/>
-      {/* Eye */}
-      <circle cx="30.5" cy="12.2" r="1.5" fill="rgba(75,65,105,0.88)"/>
-      <circle cx="31"   cy="11.7" r="0.55" fill="white" opacity="0.85"/>
-      {/* Tail feathers */}
-      <path d="M7 26 L2  34" stroke="white" strokeWidth="2.6" strokeLinecap="round" opacity="0.88"/>
-      <path d="M10 27 L6  35" stroke="white" strokeWidth="2"   strokeLinecap="round" opacity="0.66"/>
-      <path d="M13 27.5 L10 35" stroke="white" strokeWidth="1.4" strokeLinecap="round" opacity="0.44"/>
+    <svg width="30" height="13" viewBox="0 0 30 13" fill="none" aria-hidden="true">
+      <path
+        d="M0 10 C5 2 11 0 15 5 C19 0 25 2 30 10"
+        stroke="white"
+        strokeWidth="2.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
     </svg>
   );
 }
@@ -221,7 +200,7 @@ export function MailboxScreen({ onOpenLetter }: MailboxScreenProps) {
                     <span className="env-card__time">{toLiteraryTime(letter.created_at)}</span>
                     {!letter.isRead && (
                       <span className="env-card__pigeon" aria-label="未读">
-                        <PigeonIcon />
+                        <GullIcon />
                       </span>
                     )}
                     <p className="env-card__title">「{letter.title}」</p>
