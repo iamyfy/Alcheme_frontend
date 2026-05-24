@@ -7,21 +7,26 @@ type InputScreenProps = {
   onSubmit: () => void;
 };
 
-function getNow() {
+// timeZone defaults to browser locale; swap in userProfile.timezone when API is ready
+function getNow(timeZone?: string) {
   return new Date().toLocaleTimeString("zh-CN", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
+    timeZone,
   });
 }
 
-function getDateLabel() {
-  const now = new Date();
-  const month = now.getMonth() + 1;
-  const day = now.getDate();
-  const weekdays = ["日", "一", "二", "三", "四", "五", "六"];
-  const weekday = `周${weekdays[now.getDay()]}`;
-  return `${month}月${day}日 ${weekday}`;
+function getDateLabel(timeZone?: string) {
+  const parts = new Intl.DateTimeFormat("zh-CN", {
+    month: "numeric",
+    day: "numeric",
+    weekday: "short",
+    timeZone,
+  }).formatToParts(new Date());
+  const get = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((p) => p.type === type)?.value ?? "";
+  return `${get("month")}月${get("day")}日 ${get("weekday")}`;
 }
 
 export function InputScreen({ onBack, onSubmit }: InputScreenProps) {
