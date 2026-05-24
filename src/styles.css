@@ -2177,51 +2177,82 @@ button:disabled {
   50%       { box-shadow: inset 0 -2px 0 rgba(160,90,80,0.18), 0 6px 18px rgba(180,110,100,0.35); }
 }
 
-/* ── Inline feedback strip (too-short / error) ── */
-.input-feedback {
-  flex-shrink: 0;
-  padding: 7px 20px;
-  font-family: var(--font-ui);
+/* ── Floating paper-note popup (too-short / error) ── */
+.input-note-popup {
+  position: absolute;
+  bottom: calc(82px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  /* settled rotation */
+  transform: translateX(-50%) rotate(-2.2deg);
+  z-index: 20;
+  width: min(260px, calc(100% - 64px));
+
+  /* paper look */
+  background: #fdf6e8;
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 19px,
+    rgba(120, 90, 50, 0.08) 19px,
+    rgba(120, 90, 50, 0.08) 20px
+  );
+  background-position: 0 24px;
+  border-radius: 2px;
+  border: 1px solid rgba(180, 140, 90, 0.22);
+  padding: 14px 16px 14px 38px; /* left gap for leaf sticker */
+  box-shadow:
+    0 6px 20px rgba(120, 80, 40, 0.18),
+    0 1px 0  rgba(255, 245, 220, 0.9) inset;
+
+  animation: paper-drift-in 0.52s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes paper-drift-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(36px) rotate(-10deg) scale(0.86);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-6px) rotate(-0.8deg) scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) rotate(-2.2deg) scale(1);
+  }
+}
+
+.input-note-popup__leaf {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  transform: rotate(-14deg);
+  filter: drop-shadow(0 1px 1px rgba(80, 60, 30, 0.15));
+}
+
+.input-note-popup__text {
+  margin: 0;
+  font-family: var(--font-body);
   font-size: var(--text-note);
   line-height: var(--leading-body);
-  text-align: center;
-  animation: feedback-in 0.20s ease;
-}
-
-@keyframes feedback-in {
-  from { opacity: 0; transform: translateY(3px); }
-  to   { opacity: 1; transform: none; }
-}
-
-.input-feedback--warn {
-  color: var(--rose-dark);
-  /* leave room for the mic FAB (44px wide, 20px from right) */
-  padding-right: 72px;
-}
-
-.input-feedback--error {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
   color: var(--ink-muted);
-  text-align: left;
-  /* leave room for the mic FAB */
-  padding-right: 72px;
 }
 
-.input-feedback__retry {
-  flex-shrink: 0;
+.input-note-popup__text--warn {
+  color: var(--rose-dark);
+}
+
+.input-note-popup__retry {
+  display: inline-block;
+  margin-top: 8px;
   border: 0;
   background: none;
-  padding: 2px 0;
+  padding: 0;
   font-family: var(--font-ui);
   font-size: var(--text-note);
   font-weight: var(--weight-semibold);
   color: var(--rose-dark);
   cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 2px;
+  letter-spacing: 0.03em;
 }
 
 /* ── Floating mic FAB ── */

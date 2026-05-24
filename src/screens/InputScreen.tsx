@@ -121,18 +121,43 @@ export function InputScreen({ onBack, onSubmit }: InputScreenProps) {
         />
       </div>
 
-      {/* ── Inline feedback (too-short / error) ── */}
-      {status === "too-short" && (
-        <p className="input-feedback input-feedback--warn" role="alert">
-          再多给我一点线索，好让我更认真地看见你。
-        </p>
-      )}
-      {status === "error" && (
-        <div className="input-feedback input-feedback--error" role="alert">
-          <span>提炼这一页时出了点意外，内容都还在。</span>
-          <button className="input-feedback__retry" type="button" onClick={handleRetry}>
-            重试
-          </button>
+      {/* ── Floating paper-note popup ── */}
+      {(status === "too-short" || status === "error") && (
+        <div className="input-note-popup" role="alert">
+          {/* Leaf sticker — top-left corner */}
+          <div className="input-note-popup__leaf" aria-hidden>
+            <svg width="20" height="26" viewBox="0 0 20 26">
+              <path
+                d="M 10 2 Q 17 7, 17 14 Q 16 21, 10 24 Q 4 21, 3 14 Q 3 7, 10 2 Z"
+                fill="#A8B496" opacity="0.72"
+              />
+              <path
+                d="M 10 4 Q 13 9, 13 14 Q 12 19, 10 22"
+                stroke="#5E7350" strokeWidth="0.8" fill="none" opacity="0.55"
+              />
+            </svg>
+          </div>
+
+          {status === "too-short" && (
+            <p className="input-note-popup__text input-note-popup__text--warn">
+              再多给我一点线索，好让我更认真地看见你。
+            </p>
+          )}
+
+          {status === "error" && (
+            <>
+              <p className="input-note-popup__text">
+                提炼这一页时出了点意外，内容都还在。
+              </p>
+              <button
+                className="input-note-popup__retry"
+                type="button"
+                onClick={handleRetry}
+              >
+                重试 →
+              </button>
+            </>
+          )}
         </div>
       )}
 
